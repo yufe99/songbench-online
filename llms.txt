@@ -90,3 +90,8 @@ recording does not make it royalty-free. Share links contain practice parameters
 Only publish=yes pages are deployed. Rows marked verify or hold stay in pages.csv as a
 translation and feature backlog; they are not served on this domain and are absent from
 the sitemap. /privacy/ and /about/ are static pages with no application code.
+
+
+## Contact
+
+Public contact address: contact@songbench.online (a domain mailbox that forwards to the operator). Used for school/API licences, billing invoices, payment questions and bug reports. The studio itself collects no email; a message is only created when a visitor writes to it.

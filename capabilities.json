@@ -2,6 +2,7 @@
   "name": "Songbench",
   "type": "client-side-audio-workbench",
   "domain": "https://songbench.online",
+  "contact_email": "contact@songbench.online",
   "audio_upload": false,
   "server_side_api": "payments-only",
   "server_endpoints": [
