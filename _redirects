@@ -1,0 +1,3 @@
+# Canonicalise raw file URLs so /tool/index.html never competes with /tool/
+/index.html / 301
+/*/index.html /:splat/ 301

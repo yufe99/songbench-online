@@ -1,0 +1,91 @@
+# Songbench
+
+> A free, browser-local audio version studio. One file in, several versions out. No signup, no upload, no watermark.
+
+## What it does
+
+- Slow down or speed up 50-125 percent while keeping the original pitch (Web Audio preservesPitch)
+- Transpose -12 to +12 semitones, applied on export
+- A-B loop any section by dragging on the waveform
+- Remove center-panned lead vocals with L-R cancellation
+- Generated convolution reverb (hall / room / plate style impulse responses), warm bass EQ and 8D stereo pan
+- Eight one-click presets: original, slowed + reverb, nightcore, daycore, sped up, backing track, practice 70%, 8D
+- Batch export several versions of one file as 16-bit WAV, plus a plain-text manifest
+- Share a practice sheet by URL hash: speed, key, loop points, tempo and notes. No audio travels with the link.
+- Six UI languages: English, Spanish, Portuguese, Indonesian, Japanese, Russian
+
+## Architecture
+
+Every entry page is the same single-page application. There is no server-side API, no upload endpoint,
+no account and no analytics. Audio is decoded with decodeAudioData, processed with OfflineAudioContext
+and encoded to WAV inside the browser. Because there is no server API, no openapi.json is published;
+the machine-readable capability list is /capabilities.json.
+
+## Rights and scope
+
+Songbench does not host a song catalogue, does not supply lyrics and does not fetch audio from video
+platforms. The user supplies the audio and the rights. Slowing or adding reverb to a copyrighted
+recording does not make it royalty-free. Share links contain practice parameters only.
+
+## Published entry pages
+
+- https://songbench.online/ :: slow down song without changing pitch
+- https://songbench.online/transpose-song/ :: change key of a song
+- https://songbench.online/ab-loop/ :: ab loop player
+- https://songbench.online/slowed-reverb/ :: slowed and reverb maker
+- https://songbench.online/nightcore/ :: nightcore maker
+- https://songbench.online/daycore/ :: daycore maker
+- https://songbench.online/speed-up/ :: sped up song
+- https://songbench.online/8d-audio/ :: 8d audio maker
+- https://songbench.online/backing-track/ :: make backing track from song
+- https://songbench.online/audio-cutter/ :: audio cutter
+- https://songbench.online/audio-trimmer/ :: audio trimmer
+- https://songbench.online/mp3-to-wav/ :: mp3 to wav
+- https://songbench.online/audio-normalizer/ :: audio normalizer
+- https://songbench.online/add-reverb/ :: add reverb to audio
+- https://songbench.online/bpm-finder/ :: bpm finder
+- https://songbench.online/key-finder/ :: key finder
+- https://songbench.online/tap-tempo/ :: tap tempo
+- https://songbench.online/pitch-changer/ :: pitch changer
+- https://songbench.online/speed-changer/ :: speed changer
+- https://songbench.online/volume-booster/ :: volume booster
+- https://songbench.online/slow-down-for-practice/ :: slow down song for practice
+- https://songbench.online/slow-down-guitar-solo/ :: slow down guitar solo to learn
+- https://songbench.online/slow-down-for-singing/ :: slow down a song
+- https://songbench.online/change-key-for-my-voice/ :: change key of a song for my voice
+- https://songbench.online/transpose-for-karaoke/ :: transpose a song online
+- https://songbench.online/loop-section-for-practice/ :: loop a song section for practice
+- https://songbench.online/karaoke-backing-track/ :: make a karaoke backing track
+- https://songbench.online/remove-vocals-for-practice/ :: remove vocals from mp3
+- https://songbench.online/slow-down-for-dance/ :: slow down song for dance practice
+- https://songbench.online/change-key-for-worship/ :: change key for worship songs
+- https://songbench.online/slow-down-for-transcription/ :: slow down music for transcription
+- https://songbench.online/half-speed-practice/ :: slow down music online
+- https://songbench.online/mp3-to-wav-online/ :: convert mp3 to wav online
+- https://songbench.online/audio-to-wav/ :: audio to wav converter
+- https://songbench.online/export-wav-browser/ :: audio to wav converter online
+- https://songbench.online/cut-mp3/ :: cut mp3 online
+- https://songbench.online/trim-audio-file/ :: trim audio file
+- https://songbench.online/normalize-audio/ :: normalize audio online
+- https://songbench.online/no-signup-audio-editor/ :: no signup audio editor
+- https://songbench.online/free-audio-editor-no-upload/ :: free audio editor no upload
+- https://songbench.online/browser-audio-editor/ :: browser audio editor
+- https://songbench.online/bass-booster/ :: bass booster
+- https://songbench.online/find-bpm/ :: find bpm of a song
+- https://songbench.online/find-key/ :: find key of a song
+- https://songbench.online/bpm-key-finder/ :: bpm and key finder
+- https://songbench.online/reverb-effect-online/ :: reverb effect online
+- https://songbench.online/change-speed-of-audio/ :: change speed of audio
+- https://songbench.online/pitch-shifter-online/ :: pitch shifter online
+- https://songbench.online/music-speed-changer/ :: music speed changer
+- https://songbench.online/lower-key/ :: lower key of a song
+- https://songbench.online/raise-key/ :: raise key of a song
+- https://songbench.online/slowed-reverb-online/ :: slowed reverb online
+- https://songbench.online/sped-up-song-maker/ :: sped up song maker
+- https://songbench.online/tiktok-slowed-reverb/ :: tiktok slowed reverb
+
+## Note on draft pages
+
+Only publish=yes pages are deployed. Rows marked verify or hold stay in pages.csv as a
+translation and feature backlog; they are not served on this domain and are absent from
+the sitemap. /privacy/ and /about/ are static pages with no application code.

@@ -1,0 +1,125 @@
+{
+  "name": "Songbench",
+  "type": "client-side-audio-workbench",
+  "domain": "https://songbench.online",
+  "server_side_api": false,
+  "note": "There is no upload endpoint, no account system and no inference server. All decoding, processing and encoding happen in the browser with Web Audio API and OfflineAudioContext.",
+  "capabilities": [
+    {
+      "id": "speed",
+      "range": "50-125%",
+      "pitch_preserved": true
+    },
+    {
+      "id": "transpose",
+      "range": "-12..+12 semitones"
+    },
+    {
+      "id": "ab-loop",
+      "input": "drag on waveform"
+    },
+    {
+      "id": "center-vocal-cancellation",
+      "method": "L-R"
+    },
+    {
+      "id": "reverb",
+      "method": "generated convolution impulse response"
+    },
+    {
+      "id": "warm-bass",
+      "method": "lowshelf EQ"
+    },
+    {
+      "id": "8d-pan",
+      "method": "stereo panner automation"
+    },
+    {
+      "id": "presets",
+      "count": 8,
+      "ids": [
+        "original",
+        "slowed",
+        "nightcore",
+        "daycore",
+        "spedup",
+        "backing",
+        "practice",
+        "eightd"
+      ]
+    },
+    {
+      "id": "batch-export",
+      "format": "16-bit WAV + manifest.txt"
+    },
+    {
+      "id": "shareable-practice-sheet",
+      "contains": "parameters only, never audio"
+    }
+  ],
+  "ui_languages": [
+    "en",
+    "es",
+    "pt",
+    "id",
+    "ja",
+    "ru"
+  ],
+  "rights": "No song catalogue, no lyrics, no downloads from video platforms. The user supplies the audio and the rights.",
+  "entry_pages": [
+    "https://songbench.online/",
+    "https://songbench.online/transpose-song/",
+    "https://songbench.online/ab-loop/",
+    "https://songbench.online/slowed-reverb/",
+    "https://songbench.online/nightcore/",
+    "https://songbench.online/daycore/",
+    "https://songbench.online/speed-up/",
+    "https://songbench.online/8d-audio/",
+    "https://songbench.online/backing-track/",
+    "https://songbench.online/audio-cutter/",
+    "https://songbench.online/audio-trimmer/",
+    "https://songbench.online/mp3-to-wav/",
+    "https://songbench.online/audio-normalizer/",
+    "https://songbench.online/add-reverb/",
+    "https://songbench.online/bpm-finder/",
+    "https://songbench.online/key-finder/",
+    "https://songbench.online/tap-tempo/",
+    "https://songbench.online/pitch-changer/",
+    "https://songbench.online/speed-changer/",
+    "https://songbench.online/volume-booster/",
+    "https://songbench.online/slow-down-for-practice/",
+    "https://songbench.online/slow-down-guitar-solo/",
+    "https://songbench.online/slow-down-for-singing/",
+    "https://songbench.online/change-key-for-my-voice/",
+    "https://songbench.online/transpose-for-karaoke/",
+    "https://songbench.online/loop-section-for-practice/",
+    "https://songbench.online/karaoke-backing-track/",
+    "https://songbench.online/remove-vocals-for-practice/",
+    "https://songbench.online/slow-down-for-dance/",
+    "https://songbench.online/change-key-for-worship/",
+    "https://songbench.online/slow-down-for-transcription/",
+    "https://songbench.online/half-speed-practice/",
+    "https://songbench.online/mp3-to-wav-online/",
+    "https://songbench.online/audio-to-wav/",
+    "https://songbench.online/export-wav-browser/",
+    "https://songbench.online/cut-mp3/",
+    "https://songbench.online/trim-audio-file/",
+    "https://songbench.online/normalize-audio/",
+    "https://songbench.online/no-signup-audio-editor/",
+    "https://songbench.online/free-audio-editor-no-upload/",
+    "https://songbench.online/browser-audio-editor/",
+    "https://songbench.online/bass-booster/",
+    "https://songbench.online/find-bpm/",
+    "https://songbench.online/find-key/",
+    "https://songbench.online/bpm-key-finder/",
+    "https://songbench.online/reverb-effect-online/",
+    "https://songbench.online/change-speed-of-audio/",
+    "https://songbench.online/pitch-shifter-online/",
+    "https://songbench.online/music-speed-changer/",
+    "https://songbench.online/lower-key/",
+    "https://songbench.online/raise-key/",
+    "https://songbench.online/slowed-reverb-online/",
+    "https://songbench.online/sped-up-song-maker/",
+    "https://songbench.online/tiktok-slowed-reverb/"
+  ]
+}
