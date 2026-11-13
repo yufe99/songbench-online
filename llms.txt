@@ -95,3 +95,9 @@ the sitemap. /privacy/ and /about/ are static pages with no application code.
 ## Contact
 
 Public contact address: contact@songbench.online (a domain mailbox that forwards to the operator). Used for school/API licences, billing invoices, payment questions and bug reports. The studio itself collects no email; a message is only created when a visitor writes to it.
+
+
+## Legal pages
+
+Service Terms: https://songbench.online/terms/
+Privacy Policy: https://songbench.online/privacy/

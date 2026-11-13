@@ -3,6 +3,8 @@
   "type": "client-side-audio-workbench",
   "domain": "https://songbench.online",
   "contact_email": "contact@songbench.online",
+  "terms_url": "https://songbench.online/terms/",
+  "privacy_url": "https://songbench.online/privacy/",
   "audio_upload": false,
   "server_side_api": "payments-only",
   "server_endpoints": [
