@@ -16,10 +16,11 @@
 
 ## Architecture
 
-Every entry page is the same single-page application. There is no server-side API, no upload endpoint,
-no account and no analytics. Audio is decoded with decodeAudioData, processed with OfflineAudioContext
-and encoded to WAV inside the browser. Because there is no server API, no openapi.json is published;
-the machine-readable capability list is /capabilities.json.
+Every entry page is the same single-page application. There is no audio upload endpoint, no account
+and no analytics. Audio is decoded with decodeAudioData, processed with OfflineAudioContext and
+encoded to WAV inside the browser. The only server functions are payment-related: /api/checkout
+creates a Waffo hosted checkout session and /api/webhook verifies signed payment events. They
+never receive audio. No openapi.json is published; the capability list is /capabilities.json.
 
 ## Rights and scope
 

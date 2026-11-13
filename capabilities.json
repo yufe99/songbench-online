@@ -2,8 +2,14 @@
   "name": "Songbench",
   "type": "client-side-audio-workbench",
   "domain": "https://songbench.online",
-  "server_side_api": false,
-  "note": "There is no upload endpoint, no account system and no inference server. All decoding, processing and encoding happen in the browser with Web Audio API and OfflineAudioContext.",
+  "audio_upload": false,
+  "server_side_api": "payments-only",
+  "server_endpoints": [
+    "/api/checkout",
+    "/api/webhook",
+    "/api/status"
+  ],
+  "note": "All decoding, processing and WAV encoding happen in the browser with Web Audio API and OfflineAudioContext. The only server endpoints create Waffo checkout sessions and verify signed payment webhooks; they never receive audio files.",
   "capabilities": [
     {
       "id": "speed",
