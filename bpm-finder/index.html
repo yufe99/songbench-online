@@ -130,6 +130,29 @@ footer{border-top:1px solid var(--line);padding:24px 0;font-size:13px;color:var(
 .gatecard .gacts{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
 .gatecard .gmsg{font-size:12.5px;color:#8a4a10;min-height:16px}
 .linkbtn{background:none;border:0;color:#1668c1;text-decoration:underline;cursor:pointer;font-size:13px;padding:0}
+.libbox{margin-top:18px;border:1px solid #dbe6f1;border-radius:10px;background:#f8fbfe;padding:14px}
+.libbox h3{margin:0;font-size:16px}
+.libhead{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+.libbox .mut{font-size:12.5px}
+.libbox input[type=text],.libbox input[type=number]{width:100%;padding:7px 9px;border:1px solid #d6e0ea;border-radius:6px;font:inherit;font-size:13.5px;background:#fff;box-sizing:border-box}
+.libbox input[type=file]{font-size:12.5px;max-width:100%}
+.libbox .ctl label{display:block}
+.liblist{margin-top:12px;max-height:230px;overflow:auto;border:1px solid #e2ebf5;border-radius:8px;background:#fff}
+.libitem{display:flex;gap:9px;align-items:center;padding:9px 11px;border-bottom:1px solid #eef3f9;flex-wrap:wrap}
+.libitem:last-child{border-bottom:0}
+.libitem .lt{flex:1;min-width:150px;font-size:13.5px}
+.libitem .lm{font-size:11.5px;color:#6b7f93;display:block;margin-top:2px}
+.libitem button{font-size:12px;padding:4px 9px;min-height:0}
+.libempty{padding:14px;font-size:13px;color:#6b7f93}
+.markchip{display:inline-flex;align-items:center;background:#eaf3ff;border:1px solid #cfe0f2;border-radius:20px;padding:4px 10px;font-size:12px;cursor:pointer;margin:3px 4px 3px 0}
+.markchip .x{margin-left:8px;color:#8a4a10;font-weight:700}
+#printSheet{display:none;font:14px/1.6 system-ui,sans-serif;color:#111}
+#printSheet h1{font-size:22px;margin:0 0 4px}
+#printSheet h2{font-size:16px;margin:18px 0 6px;border-bottom:1px solid #ccc;padding-bottom:4px}
+#printSheet table{border-collapse:collapse;width:100%}
+#printSheet td{padding:5px 8px;border-bottom:1px solid #ddd;vertical-align:top}
+#printSheet td:first-child{width:160px;color:#555}
+@media print{body>*:not(#printSheet){display:none!important}#printSheet{display:block!important}@page{margin:18mm}}
 @media(max-width:760px){h1{font-size:29px}.g3,.g2{grid-template-columns:1fr}.hd nav{display:none}.hero{padding:30px 0 18px}}
 </style>
 </head>
@@ -263,6 +286,59 @@ footer{border-top:1px solid var(--line);padding:24px 0;font-size:13px;color:var(
     <span class="mut" data-i18n2="batchHint">Pick any set of presets and export them together as separate WAV files, plus a plain-text manifest.</span>
   </div>
 
+  <div class="libbox" id="analysisBox">
+    <div class="libhead"><h3 data-lib="anH">Automatic tempo &amp; key</h3><span class="badge" data-lib="anEst">estimate</span></div>
+    <p class="mut" data-lib="anSub">Analysed in your browser after you open a file. Results are estimates that you can always edit by hand.</p>
+    <div class="row" style="margin-top:12px;align-items:flex-end">
+      <div class="ctl" style="min-width:110px;flex:0 0 110px"><label data-lib="anTempo">Tempo</label><b id="anBpm">- BPM</b></div>
+      <div class="ctl" style="min-width:140px;flex:0 0 140px"><label data-lib="anKey">Estimated key</label><b id="anKey">-</b></div>
+      <div class="ctl" style="min-width:150px;flex:0 0 150px"><label data-lib="anGrid">Beat grid</label><button id="gridBtn" data-lib="anGridOff">Grid: off</button></div>
+      <div class="ctl"><label data-lib="anSections">Suggested 8-bar sections</label><div class="chips" id="sectionChips"><span class="mut">-</span></div></div>
+    </div>
+    <div class="row" style="margin-top:10px"><button id="analyzeBtn" disabled data-lib="anRun">Analyse this file</button><span class="mut" id="anMsg"></span></div>
+  </div>
+
+  <div class="libbox" id="libraryBox">
+    <div class="libhead"><h3 data-lib="libH">Practice library</h3><span class="badge" data-lib="libLocal">saved on this device</span></div>
+    <p class="mut" data-lib="libSub">Save a setup - speed, key, loop, named sections, student and notes - and reopen it next week. Nothing is uploaded. Audio files are not stored; reopen the same file to continue.</p>
+    <div class="row" style="margin-top:12px;align-items:flex-end">
+      <div class="ctl" style="min-width:200px"><label data-lib="libName">Setup name</label><input type="text" id="libTitle" maxlength="80" placeholder="e.g. Chorus - D minor"></div>
+      <div class="ctl" style="min-width:160px"><label data-lib="libStudent">Student / class</label><input type="text" id="libStudent" maxlength="60" placeholder="e.g. Class 3A"></div>
+      <button class="pri" id="libSave" data-lib="libSave">Save setup</button>
+    </div>
+    <div class="row" style="margin-top:12px"><div class="ctl"><label data-lib="libMarks">Named sections</label><div id="markChips"></div></div></div>
+    <div class="row" style="margin-top:8px;align-items:flex-end">
+      <div class="ctl" style="min-width:180px"><label data-lib="libMarkName">Section name</label><input type="text" id="markName" maxlength="60" placeholder="e.g. Chorus, bars 12-20"></div>
+      <button id="libAddMark" disabled data-lib="libAddMark">Save current A-B as named section</button>
+      <span class="mut" id="libMatch"></span>
+    </div>
+    <div class="liblist" id="libList"></div>
+    <div class="row" style="margin-top:12px;flex-wrap:wrap;gap:8px">
+      <button id="libExport" data-lib="libExport">Export backup (.json)</button>
+      <button id="libImport" data-lib="libImport">Import backup</button>
+      <button id="libPrint" data-lib="libPrint">Print homework sheet</button>
+      <button id="libClear" class="linkbtn" data-lib="libClear">Clear all</button>
+      <input type="file" id="libFile" accept=".json,application/json" hidden>
+    </div>
+    <p class="mut" style="margin:10px 0 0" data-lib="libWarn">Stored in this browser only. Clearing site data or using private mode removes it - export a backup to keep it or move it to another device.</p>
+  </div>
+
+  <div class="libbox" id="trainerBox">
+    <div class="libhead"><h3 data-lib="trH">Speed ladder &amp; practice packs</h3><span class="badge" data-lib="trZip">ZIP, made in your browser</span></div>
+    <p class="mut" data-lib="trSub">Build a graded set of versions from one file, or apply the current settings to a whole set of songs. One ZIP instead of a wall of download prompts.</p>
+    <div class="row" style="margin-top:12px;align-items:flex-end">
+      <div class="ctl" style="min-width:110px;flex:0 0 110px"><label data-lib="trStart">Start speed %</label><input type="number" id="trStart" min="50" max="100" value="60" step="5"></div>
+      <div class="ctl" style="min-width:100px;flex:0 0 100px"><label data-lib="trStep">Step %</label><input type="number" id="trStep" min="5" max="20" value="10" step="5"></div>
+      <div class="ctl" style="min-width:100px;flex:0 0 100px"><label data-lib="trLevels">Steps</label><input type="number" id="trLevels" min="2" max="8" value="5" step="1"></div>
+      <button id="trBuild" disabled data-lib="trBuild">Build speed ladder ZIP</button>
+    </div>
+    <div class="row" style="margin-top:14px;align-items:flex-end">
+      <div class="ctl"><label data-lib="trQueue">Multiple songs - same settings</label><input type="file" id="trFiles" multiple accept="audio/*,.mp3,.wav,.m4a,.aac,.ogg,.flac"><div class="chips" id="trQueue"></div></div>
+      <button id="trBatch" data-lib="trBatch">Build batch ZIP</button>
+    </div>
+    <p class="mut" style="margin:10px 0 0" id="trMsg"></p>
+  </div>
+
   <div class="out" id="out" data-i18n="outInit">Result will appear here. Nothing is sent to a server.</div>
   <div class="status" id="status"></div>
   <p class="mut" style="margin:14px 0 0" data-i18n="techNote">All processing runs offline in your browser with the Web Audio API. Export is 16-bit WAV.</p>
@@ -323,10 +399,14 @@ footer{border-top:1px solid var(--line);padding:24px 0;font-size:13px;color:var(
   <details><summary data-i18n="q3">What exactly do I share with a student?</summary><p data-i18n="a3">A practice sheet - speed, key shift, loop points, tempo and your note - encoded in the link. No audio travels with it, so the student opens their own legally held copy of the song and gets your exact settings.</p></details>
   <details><summary data-i18n="q4">Does slowing a song change the key?</summary><p data-i18n="a4">No. The speed control keeps the original pitch. Transposition is applied when you export, so the practice sheet and the WAV agree.</p></details>
   <details><summary data-i18n="q5">Which browsers and formats work?</summary><p data-i18n="a5">Current Chrome, Edge, Firefox and Safari. Any format your browser decodes (MP3, WAV, M4A/AAC, OGG, FLAC). Exports are 16-bit WAV.</p></details>
+  <details><summary>Where are my saved practice setups stored?</summary><p>In this browser only, using local storage. Nothing is uploaded and we keep no copy. Audio files are never stored - reopen the same song to continue. Clearing site data removes the library, so export a JSON backup if you want to keep it or move it to another device.</p></details>
+  <details><summary>Is the automatic tempo and key detection exact?</summary><p>No. Tempo is estimated from the audio's energy envelope and key from a chroma analysis; both are labelled estimates and can be overridden by hand or with Tap tempo. Always check by ear before relying on them for a lesson.</p></details>
 </section>
 </div>
 
 <footer><div class="wrap foot"><span data-i18n="foot">Songbench - Free browser-local audio tools. Free tools need no account; Google sign-in is required only for buying Pro and paid Pro downloads. Your files never leave the device.</span><nav class="footlinks"><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a><a href="/about/">About</a><a href="/contact/">Contact</a><a href="/sitemap/">Sitemap</a><a href="/#faq">FAQ</a></nav></div></footer>
+
+<div id="printSheet" aria-hidden="true"></div>
 
 <div class="gatewrap" id="gate" hidden>
   <div class="card gatecard" role="dialog" aria-modal="true" aria-labelledby="gateTitle" tabindex="-1">
@@ -376,6 +456,7 @@ function setLang(l,keepSeo){
     var k=el.getAttribute("data-i18n2");
     if(d2[k]) el.textContent=d2[k];
   });
+  if(typeof applyLibI18n==="function")applyLibI18n();
   if(!keepSeo) document.title=(l==="en"?"Songbench - Turn Any Song Into a Lesson-Ready Practice Track":"Songbench - "+d.h1);
 }
 document.getElementById("lang").addEventListener("change",function(e){setLang(e.target.value,true)});
@@ -404,9 +485,10 @@ function load(f){
     ensureAC().decodeAudioData(r.result,function(b){
       buf=b; rebuild(); drawWave();
       g("fName").textContent=f.name;
-      ["play","stop","loopBtn","clearLoop","cancelBtn","expWav","expLoop","expSheet","share","expBatch"].forEach(function(id){g(id).disabled=false});
+      ["play","stop","loopBtn","clearLoop","cancelBtn","expWav","expLoop","expSheet","share","expBatch","analyzeBtn","libAddMark","trBuild"].forEach(function(id){g(id).disabled=false});
       say("Ready. "+b.duration.toFixed(1)+" s, "+b.numberOfChannels+" ch, "+b.sampleRate+" Hz.","ok");
       outEl.textContent="Loaded: "+f.name+"\nDuration: "+b.duration.toFixed(2)+" s\nNo data left this browser.";
+      if(typeof onAudioLoaded==="function")onAudioLoaded(b,f);
     },function(){say("This browser could not decode that file. Try WAV or MP3.","err")});
   };
   r.readAsArrayBuffer(f);
@@ -435,6 +517,17 @@ function drawWave(){
     ctx.strokeStyle="#1668c1";ctx.lineWidth=1.5;
     ctx.beginPath();ctx.moveTo(x1,0);ctx.lineTo(x1,h);ctx.moveTo(x2,0);ctx.lineTo(x2,h);ctx.stroke();
   }
+  if(typeof gridOn!=="undefined"&&gridOn&&bpm>0&&playBuf){
+    var beatLen=60/bpm,count=Math.min(240,Math.floor(playBuf.duration/beatLen));
+    ctx.strokeStyle="rgba(110,145,180,0.3)";ctx.lineWidth=1;ctx.beginPath();
+    for(var bi=0;bi<=count;bi++){var bx=(bi*beatLen)/playBuf.duration*w;if(bx>w)break;ctx.moveTo(bx,0);ctx.lineTo(bx,h)}
+    ctx.stroke();
+  }
+  if(typeof marksList!=="undefined"&&marksList.length&&playBuf){
+    ctx.strokeStyle="rgba(15,138,106,.5)";ctx.lineWidth=1;ctx.beginPath();
+    marksList.forEach(function(m){var mx=m.a/playBuf.duration*w;ctx.moveTo(mx,0);ctx.lineTo(mx,h)});
+    ctx.stroke();
+  }
   if(playing){
     var pos=loopOn&&loopB>loopA?(loopA+((AC.currentTime-startedAt)*speed+startOffset)%(loopB-loopA)):Math.min(playBuf.duration,(AC.currentTime-startedAt)*speed+startOffset);
     var px=pos/playBuf.duration*w;
@@ -445,7 +538,7 @@ function drawWave(){
 function xToTime(x){var w=cv.clientWidth||600;return Math.max(0,Math.min(playBuf.duration,x/w*playBuf.duration))}
 cv.addEventListener("pointerdown",function(e){if(!playBuf)return;dragging=true;var r=cv.getBoundingClientRect();dragStart=xToTime(e.clientX-r.left);loopA=dragStart;loopB=dragStart;cv.setPointerCapture(e.pointerId);drawWave()});
 cv.addEventListener("pointermove",function(e){if(!dragging||!playBuf)return;var r=cv.getBoundingClientRect(),t=xToTime(e.clientX-r.left);loopA=Math.min(dragStart,t);loopB=Math.max(dragStart,t);if(loopB-loopA<0.05){loopA=-1;loopB=-1}updateLoopLabel();drawWave()});
-cv.addEventListener("pointerup",function(){dragging=false;updateLoopLabel()});
+cv.addEventListener("pointerup",function(){dragging=false;if(typeof gridOn!=="undefined"&&gridOn&&loopA>=0&&loopB>loopA&&typeof snapToBeat==="function"){loopA=snapToBeat(loopA);loopB=snapToBeat(loopB);if(loopB<=loopA)loopB=loopA+0.1;drawWave()}updateLoopLabel()});
 function updateLoopLabel(){g("tLoop").textContent=loopA>=0&&loopB>loopA?"A "+fmt(loopA)+" / B "+fmt(loopB):"A - / B -"}
 
 function stopPlay(){if(src){try{src.stop()}catch(e){}src=null}playing=false;g("play").textContent=I18N[document.getElementById("lang").value]?I18N[document.getElementById("lang").value].btnPlay:"Play";g("tPos").textContent="0:00.0";drawWave()}
@@ -662,10 +755,11 @@ async function apply8D(input){
   }else s.connect(oc.destination);
   s.start();return await oc.startRendering();
 }
-function renderFinal(loopOnly,p){
+function renderFinal(loopOnly,p,srcBuf){
   p=p||P;
-  if(!buf)return Promise.resolve(null);
-  var base=p.cancel?centerCancel(buf):buf;
+  var source=srcBuf||buf;
+  if(!source)return Promise.resolve(null);
+  var base=p.cancel?centerCancel(source):source;
   var b=loopOnly&&loopA>=0&&loopB>loopA?sliceBuffer(base,loopA,loopB):base;
   return (async function(){
     if(p.speed!==1)b=await offlineRender(b,p.speed,true,b.duration/p.speed);
@@ -929,7 +1023,433 @@ async function requireGoogle(action,reason){
   });
 })();
 
+/* ==================================================================
+   Practice Library / Automatic tempo + key / Speed ladder + ZIP packs
+   All three run entirely in the browser. No upload, no server call,
+   no audio file is ever persisted - only small JSON practice setups.
+   ================================================================== */
+var LIB_I18N={
+  en:{
+    anH:"Automatic tempo & key",anEst:"estimate",anSub:"Analysed in your browser after you open a file. Results are estimates that you can always edit by hand.",
+    anTempo:"Tempo",anKey:"Estimated key",anGrid:"Beat grid",anGridOff:"Grid: off",anGridOn:"Grid: on",anSections:"Suggested 8-bar sections",anRun:"Analyse this file",
+    libH:"Practice library",libLocal:"saved on this device",libSub:"Save a setup - speed, key, loop, named sections, student and notes - and reopen it next week. Nothing is uploaded. Audio files are not stored; reopen the same file to continue.",
+    libName:"Setup name",libStudent:"Student / class",libSave:"Save setup",libMarks:"Named sections",libMarkName:"Section name",libAddMark:"Save current A-B as named section",
+    libExport:"Export backup (.json)",libImport:"Import backup",libPrint:"Print homework sheet",libClear:"Clear all",libWarn:"Stored in this browser only. Clearing site data or using private mode removes it - export a backup to keep it or move it to another device.",
+    libEmpty:"No saved setups yet. Set your speed, key and loop, give it a name, then press Save setup.",libOpen:"Open",libSheet:"Sheet",libDel:"Delete",
+    libSaved:"Setup saved on this device.",libRestored:"Setup restored. Reopen the same audio file to continue.",libDeleted:"Setup deleted.",libCleared:"Library cleared.",
+    libConfirmDelete:"Delete this saved setup?",libConfirmClear:"Delete ALL saved setups on this device? Export a backup first if you want to keep them.",
+    libExported:"Backup exported.",libImported:"setups imported.",libBadFile:"That file is not a Songbench backup.",libNoLoop:"Drag on the waveform to mark an A-B section first.",
+    libMarkAdded:"Section added to this setup.",libMatchText:"saved setup(s) for this file.",libRestore:"Restore latest",
+    trH:"Speed ladder & practice packs",trZip:"ZIP, made in your browser",trSub:"Build a graded set of versions from one file, or apply the current settings to a whole set of songs. One ZIP instead of a wall of download prompts.",
+    trStart:"Start speed %",trStep:"Step %",trLevels:"Steps",trBuild:"Build speed ladder ZIP",trQueue:"Multiple songs - same settings",trBatch:"Build batch ZIP",
+    trNeedFile:"Open an audio file first.",trNoQueue:"Choose one or more audio files first.",trBuilding:"Rendering",trDone:"Ready:",trFail:"Could not build the pack. Try a shorter file or fewer steps.",trVersions:"files in one ZIP."
+  },
+  es:{anH:"Tempo y tono automaticos",anEst:"estimado",anTempo:"Tempo",anKey:"Tono estimado",anGrid:"Cuadricula",anGridOff:"Cuadricula: no",anGridOn:"Cuadricula: si",anRun:"Analizar archivo",
+    libH:"Biblioteca de practica",libLocal:"guardado en este dispositivo",libName:"Nombre",libStudent:"Alumno / clase",libSave:"Guardar",libMarks:"Secciones",libMarkName:"Nombre de seccion",libAddMark:"Guardar A-B como seccion",
+    libExport:"Exportar copia",libImport:"Importar copia",libPrint:"Imprimir ficha",libClear:"Borrar todo",libOpen:"Abrir",libSheet:"Ficha",libDel:"Borrar",libEmpty:"Aun no hay practicas guardadas.",
+    trH:"Escalera de velocidad y packs",trZip:"ZIP local",trBuild:"Crear ZIP de velocidades",trBatch:"Crear ZIP por lote",trDone:"Listo:",trFail:"No se pudo crear el paquete."},
+  pt:{anH:"Tempo e tom automaticos",anEst:"estimativa",anTempo:"Tempo",anKey:"Tom estimado",anGrid:"Grade",anGridOff:"Grade: nao",anGridOn:"Grade: sim",anRun:"Analisar arquivo",
+    libH:"Biblioteca de pratica",libLocal:"salvo neste aparelho",libName:"Nome",libStudent:"Aluno / turma",libSave:"Salvar",libMarks:"Seccoes",libMarkName:"Nome da seccao",libAddMark:"Salvar A-B como seccao",
+    libExport:"Exportar copia",libImport:"Importar copia",libPrint:"Imprimir ficha",libClear:"Apagar tudo",libOpen:"Abrir",libSheet:"Ficha",libDel:"Apagar",libEmpty:"Nenhuma pratica salva ainda.",
+    trH:"Escada de velocidade e pacotes",trZip:"ZIP local",trBuild:"Criar ZIP de velocidades",trBatch:"Criar ZIP em lote",trDone:"Pronto:",trFail:"Nao foi possivel criar o pacote."},
+  id:{anH:"Tempo & kunci otomatis",anEst:"perkiraan",anTempo:"Tempo",anKey:"Kunci perkiraan",anGrid:"Grid ketuk",anGridOff:"Grid: mati",anGridOn:"Grid: aktif",anRun:"Analisis berkas",
+    libH:"Pustaka latihan",libLocal:"tersimpan di perangkat ini",libName:"Nama",libStudent:"Murid / kelas",libSave:"Simpan",libMarks:"Bagian",libMarkName:"Nama bagian",libAddMark:"Simpan A-B sebagai bagian",
+    libExport:"Ekspor cadangan",libImport:"Impor cadangan",libPrint:"Cetak lembar tugas",libClear:"Hapus semua",libOpen:"Buka",libSheet:"Lembar",libDel:"Hapus",libEmpty:"Belum ada latihan tersimpan.",
+    trH:"Tangga kecepatan & paket",trZip:"ZIP lokal",trBuild:"Buat ZIP kecepatan",trBatch:"Buat ZIP batch",trDone:"Siap:",trFail:"Gagal membuat paket."},
+  ja:{anH:"テンポ・キー自動解析",anEst:"推定値",anTempo:"テンポ",anKey:"推定キー",anGrid:"ビートグリッド",anGridOff:"グリッド: オフ",anGridOn:"グリッド: オン",anRun:"解析する",
+    libH:"練習ライブラリ",libLocal:"この端末に保存",libName:"名前",libStudent:"生徒 / クラス",libSave:"保存",libMarks:"セクション",libMarkName:"セクション名",libAddMark:"A-B をセクションとして保存",
+    libExport:"バックアップ書き出し",libImport:"バックアップ読込",libPrint:"練習シート印刷",libClear:"すべて削除",libOpen:"開く",libSheet:"シート",libDel:"削除",libEmpty:"保存済みの練習はありません。",
+    trH:"スピード練習パック",trZip:"ブラウザ内 ZIP",trBuild:"速度別 ZIP 作成",trBatch:"一括 ZIP 作成",trDone:"完了:",trFail:"パックを作成できませんでした。"},
+  ru:{anH:"Автоопределение темпа и тональности",anEst:"оценка",anTempo:"Темп",anKey:"Тональность",anGrid:"Сетка долей",anGridOff:"Сетка: выкл",anGridOn:"Сетка: вкл",anRun:"Анализировать",
+    libH:"Библиотека упражнений",libLocal:"сохранено на этом устройстве",libName:"Название",libStudent:"Ученик / класс",libSave:"Сохранить",libMarks:"Фрагменты",libMarkName:"Название фрагмента",libAddMark:"Сохранить A-B как фрагмент",
+    libExport:"Экспорт копии",libImport:"Импорт копии",libPrint:"Печать листа",libClear:"Удалить всё",libOpen:"Открыть",libSheet:"Лист",libDel:"Удалить",libEmpty:"Сохранённых упражнений пока нет.",
+    trH:"Лестница темпа и пакеты",trZip:"ZIP в браузере",trBuild:"Создать ZIP темпов",trBatch:"Создать пакетный ZIP",trDone:"Готово:",trFail:"Не удалось создать пакет."}
+};
+function libT(k){
+  if(!LIB_I18N||!LIB_I18N.en)return k;
+  var l=(g("lang")&&g("lang").value)||"en";
+  return (LIB_I18N[l]||LIB_I18N.en)[k]||LIB_I18N.en[k]||k;
+}
+function applyLibI18n(){
+  if(!LIB_I18N||!LIB_I18N.en)return;
+  document.querySelectorAll("[data-lib]").forEach(function(el){var v=libT(el.getAttribute("data-lib"));if(v)el.textContent=v});
+  var gb=g("gridBtn");if(gb)gb.textContent=gridOn?libT("anGridOn"):libT("anGridOff");
+}
+function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+function num(v,d){var n=Number(v);return isFinite(n)?n:d}
+
+/* ---------- 1. Automatic tempo / key / beat grid ------------------ */
+var gridOn=false,detectedKey="",detectedBpm=0,marksList=[],fileSig="",queueFiles=[];
+function snapToBeat(t){if(!bpm||!playBuf)return t;var beat=60/bpm;return Math.max(0,Math.min(playBuf.duration,Math.round(t/beat)*beat))}
+function fft(re,im){
+  var n=re.length,i,j,k,len,ang,wr,wi,cr,ci,ur,ui,vr,vi,ncr,tr,ti,bit;
+  for(i=1,j=0;i<n;i++){bit=n>>1;for(;j&bit;bit>>=1)j^=bit;j^=bit;if(i<j){tr=re[i];re[i]=re[j];re[j]=tr;ti=im[i];im[i]=im[j];im[j]=ti}}
+  for(len=2;len<=n;len<<=1){
+    ang=-2*Math.PI/len;wr=Math.cos(ang);wi=Math.sin(ang);
+    for(i=0;i<n;i+=len){cr=1;ci=0;
+      for(k=0;k<len/2;k++){
+        ur=re[i+k];ui=im[i+k];
+        vr=re[i+k+len/2]*cr-im[i+k+len/2]*ci;
+        vi=re[i+k+len/2]*ci+im[i+k+len/2]*cr;
+        re[i+k]=ur+vr;im[i+k]=ui+vi;
+        re[i+k+len/2]=ur-vr;im[i+k+len/2]=ui-vi;
+        ncr=cr*wr-ci*wi;ci=cr*wi+ci*wr;cr=ncr;
+      }
+    }
+  }
+}
+function estimateBPM(buffer){
+  var ch=buffer.getChannelData(0),sr=buffer.sampleRate,win=1024,hop=1024;
+  var n=Math.floor((ch.length-win)/hop);
+  if(n<64)return 0;
+  var stride=Math.max(1,Math.floor(n/6000)),frames=Math.ceil(n/stride),env=new Float32Array(frames),i,j,s,st,k;
+  for(i=0,k=0;i<n;i+=stride,k++){
+    s=0;st=i*hop;
+    for(j=0;j<win;j+=2){var v=ch[st+j]||0;s+=v*v}
+    env[k]=Math.sqrt(s/(win/2));
+  }
+  var on=new Float32Array(frames),mean=0;
+  for(i=1;i<frames;i++){var d=env[i]-env[i-1];on[i]=d>0?d:0}
+  for(i=0;i<frames;i++)mean+=on[i];mean/=frames;
+  for(i=0;i<frames;i++)on[i]-=mean;
+  var fps=sr/(hop*stride),minLag=Math.max(2,Math.round(fps*60/220)),maxLag=Math.min(frames-2,Math.round(fps*60/50));
+  var best=0,bestScore=-1;
+  for(var lag=minLag;lag<=maxLag;lag++){
+    var sc=0;for(i=0;i+lag<frames;i++)sc+=on[i]*on[i+lag];
+    sc/=(frames-lag);
+    if(sc>bestScore){bestScore=sc;best=lag}
+  }
+  if(best<=0)return 0;
+  var v=60*fps/best;
+  while(v<70)v*=2;while(v>180)v/=2;
+  return Math.round(v);
+}
+function estimateKey(buffer){
+  var ch=buffer.getChannelData(0),sr=buffer.sampleRate,N=4096,i,k;
+  var dur=Math.min(buffer.duration,30),start=Math.floor(Math.max(0,(buffer.duration-dur)/2)*sr);
+  var frames=48,hop=Math.max(N,Math.floor(dur*sr/frames));
+  var chroma=new Float64Array(12),win=new Float64Array(N);
+  for(i=0;i<N;i++)win[i]=0.5-0.5*Math.cos(2*Math.PI*i/(N-1));
+  var used=0;
+  for(var f=0;f<frames;f++){
+    var off=start+f*hop;if(off+N>=ch.length)break;
+    var re=new Float64Array(N),im=new Float64Array(N);
+    for(i=0;i<N;i++)re[i]=ch[off+i]*win[i];
+    fft(re,im);used++;
+    for(k=1;k<N/2;k++){
+      var freq=k*sr/N;if(freq<80||freq>2000)continue;
+      var midi=69+12*Math.log(freq/440)/Math.LN2;
+      var pc=((Math.round(midi)%12)+12)%12;
+      chroma[pc]+=re[k]*re[k]+im[k]*im[k];
+    }
+  }
+  if(!used)return "";
+  var sum=0;for(i=0;i<12;i++)sum+=chroma[i];if(sum<=0)return "";
+  for(i=0;i<12;i++)chroma[i]/=sum;
+  var major=[6.35,2.23,3.48,2.33,4.38,4.09,2.52,5.19,2.39,3.66,2.29,2.88];
+  var minor=[6.33,2.68,3.52,5.38,2.60,3.53,2.54,4.75,3.98,2.69,3.34,3.17];
+  var names=["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"],bestT=0,bestMaj=true,best=-1;
+  for(var t=0;t<12;t++){
+    for(var m=0;m<2;m++){
+      var prof=m?minor:major,a=0;
+      for(i=0;i<12;i++)a+=chroma[i]*prof[(i-t+12)%12];
+      if(a>best){best=a;bestT=t;bestMaj=(m===0)}
+    }
+  }
+  return names[bestT]+" "+(bestMaj?"major":"minor");
+}
+function buildSections(b){
+  var box=g("sectionChips");if(!box)return;box.innerHTML="";
+  if(!bpm||!b||b.duration<16){box.innerHTML='<span class="mut">-</span>';return}
+  var seg=8*4*60/bpm,n=Math.min(8,Math.floor(b.duration/seg));
+  if(n<2){box.innerHTML='<span class="mut">-</span>';return}
+  for(var i=0;i<n;i++){
+    (function(i){
+      var a=i*seg,z=Math.min(b.duration,(i+1)*seg);
+      var el=document.createElement("span");el.className="markchip";
+      el.textContent="Section "+(i+1)+"  "+fmt(a)+"-"+fmt(z);
+      el.addEventListener("click",function(){loopA=a;loopB=z;updateLoopLabel();drawWave();say("Section "+(i+1)+" selected.","ok")});
+      box.appendChild(el);
+    })(i);
+  }
+}
+function analyzeBuffer(b){
+  if(!b)return;
+  var t0=performance.now(),bp=0,ky="";
+  try{bp=estimateBPM(b)}catch(e){}
+  try{ky=estimateKey(b)}catch(e){}
+  detectedBpm=bp;detectedKey=ky;
+  if(bp){bpm=bp;g("bpmV").textContent=bp+" BPM";g("anBpm").textContent=bp+" BPM"}
+  if(ky){g("anKey").textContent=ky;if(!g("keyName").value)g("keyName").value=ky}
+  g("anMsg").textContent="Estimated in "+Math.round(performance.now()-t0)+" ms - check by ear before relying on it.";
+  buildSections(b);drawWave();
+}
+function onAudioLoaded(b,f){
+  fileSig=(f.name||"")+"|"+f.size;
+  var lib=libRead(),matches=lib.items.filter(function(x){return x.sig===fileSig}),el=g("libMatch");
+  if(!el)return;
+  el.innerHTML="";
+  if(matches.length){
+    el.appendChild(document.createTextNode(matches.length+" "+libT("libMatchText")+" "));
+    var btn=document.createElement("button");btn.type="button";btn.textContent=libT("libRestore");
+    btn.addEventListener("click",function(){applySetup(matches[0])});
+    el.appendChild(btn);
+  }
+  setTimeout(function(){analyzeBuffer(b)},300);
+}
+g("analyzeBtn").addEventListener("click",function(){if(buf)analyzeBuffer(buf);else say(libT("trNeedFile"),"err")});
+g("gridBtn").addEventListener("click",function(){
+  gridOn=!gridOn;this.textContent=gridOn?libT("anGridOn"):libT("anGridOff");
+  this.classList.toggle("on",gridOn);drawWave();
+});
+
+/* ---------- 2. Practice library (localStorage) -------------------- */
+var LIB_KEY="songbench.library.v1";
+function libRead(){
+  try{var o=JSON.parse(localStorage.getItem(LIB_KEY)||"{}");if(o&&Array.isArray(o.items))return o}catch(e){}
+  return {version:1,items:[]};
+}
+function libWrite(o){
+  try{localStorage.setItem(LIB_KEY,JSON.stringify(o));return true}
+  catch(e){say("Could not save in this browser (storage full or private mode). Export a backup instead.","err");return false}
+}
+function captureSetup(title,student){
+  return {
+    id:"s"+Date.now().toString(36)+Math.random().toString(36).slice(2,6),
+    title:String(title||"").slice(0,80)||(baseName()+" - "+Math.round(speed*100)+"%"),
+    student:String(student||"").slice(0,60),file:fileName||"",sig:fileSig||"",duration:buf?buf.duration:0,
+    savedAt:Date.now(),speed:speed,semi:semi,bpm:bpm,keyName:g("keyName").value,note:g("note").value,
+    loopA:loopA,loopB:loopB,cancelCenter:cancelCenter,
+    fx:{speed:P.speed,semi:P.semi,cancel:P.cancel,rev:P.rev,sec:P.sec,bass:P.bass,pan:P.pan,gain:P.gain,norm:P.norm},
+    marks:marksList.map(function(m){return {id:m.id,label:m.label,a:m.a,b:m.b}})
+  };
+}
+function applySetup(s){
+  var fx=s.fx||{};
+  applyParams({speed:num(fx.speed,s.speed),semi:num(fx.semi,s.semi),cancel:!!(fx.cancel||s.cancelCenter),
+    rev:num(fx.rev,0),sec:num(fx.sec,2.5),bass:num(fx.bass,0),pan:!!fx.pan,gain:num(fx.gain,0),norm:!!fx.norm},"custom");
+  loopA=num(s.loopA,-1);loopB=num(s.loopB,-1);updateLoopLabel();drawWave();
+  bpm=num(s.bpm,0);g("bpmV").textContent=bpm?bpm+" BPM":"- BPM";
+  g("keyName").value=s.keyName||"";g("note").value=s.note||"";
+  g("libTitle").value=s.title||"";g("libStudent").value=s.student||"";
+  marksList=(Array.isArray(s.marks)?s.marks:[]).map(function(m){return {id:m.id||("m"+Math.random().toString(36).slice(2)),label:String(m.label||"Section"),a:num(m.a,0),b:num(m.b,0)}});
+  renderMarks();drawWave();say(libT("libRestored"),"ok");
+}
+function renderMarks(){
+  var box=g("markChips");if(!box)return;box.innerHTML="";
+  if(!marksList.length){box.innerHTML='<span class="mut">-</span>';drawWave();return}
+  marksList.forEach(function(m){
+    var el=document.createElement("span");el.className="markchip";
+    el.appendChild(document.createTextNode(m.label+"  "+fmt(m.a)+"-"+fmt(m.b)));
+    el.addEventListener("click",function(){loopA=m.a;loopB=m.b;updateLoopLabel();drawWave();say("Loaded section: "+m.label,"ok")});
+    var x=document.createElement("span");x.className="x";x.textContent="x";
+    x.addEventListener("click",function(e){e.stopPropagation();marksList=marksList.filter(function(z){return z.id!==m.id});renderMarks()});
+    el.appendChild(x);box.appendChild(el);
+  });
+  drawWave();
+}
+function renderLib(){
+  var box=g("libList"),lib=libRead();if(!box)return;
+  box.innerHTML="";
+  if(!lib.items.length){box.innerHTML='<div class="libempty">'+esc(libT("libEmpty"))+'</div>';return}
+  lib.items.slice().sort(function(a,b){return (b.savedAt||0)-(a.savedAt||0)}).forEach(function(s){
+    var row=document.createElement("div");row.className="libitem";
+    var info=document.createElement("div");info.className="lt";
+    info.innerHTML='<strong>'+esc(s.title||"Untitled")+'</strong><span class="lm">'+esc([
+      s.student,s.file?("File: "+s.file):"",Math.round(num(s.speed,1)*100)+"% - "+(num(s.semi,0)>0?"+":"")+num(s.semi,0)+" st - "+(s.keyName||"-")
+    ].filter(Boolean).join(" | "))+'</span>';
+    row.appendChild(info);
+    [["libOpen","open"],["libSheet","sheet"],["libDel","del"]].forEach(function(pair){
+      var b=document.createElement("button");b.type="button";b.textContent=libT(pair[0]);
+      b.addEventListener("click",function(){
+        if(pair[1]==="open")applySetup(s);
+        else if(pair[1]==="sheet")printSheet(s);
+        else{
+          if(!window.confirm(libT("libConfirmDelete")))return;
+          var l=libRead();l.items=l.items.filter(function(x){return x.id!==s.id});libWrite(l);renderLib();say(libT("libDeleted"),"ok");
+        }
+      });
+      row.appendChild(b);
+    });
+    box.appendChild(row);
+  });
+}
+function printSheet(s){
+  s=s||captureSetup(g("libTitle").value.trim()||baseName(),g("libStudent").value.trim());
+  var rows=[
+    ["Song / file",s.file||"-"],["Student / class",s.student||"-"],["Setup",s.title||"-"],
+    ["Speed",Math.round(num(s.speed,1)*100)+"% (pitch preserved)"],
+    ["Transpose",(num(s.semi,0)>0?"+":"")+num(s.semi,0)+" semitones"],
+    ["Key",s.keyName||"-"],["Tempo",s.bpm?s.bpm+" BPM":"-"],
+    ["Main loop",(num(s.loopA,-1)>=0&&num(s.loopB,-1)>num(s.loopA,-1))?fmt(num(s.loopA,0))+" -> "+fmt(num(s.loopB,0)):"-"],
+    ["Lead vocal removed",s.cancelCenter?"Yes":"No"],["Notes",s.note||"-"]
+  ];
+  var html='<h1>Songbench practice sheet</h1><p>Prepared for '+esc(s.student||"student")+" - "+esc(new Date().toLocaleDateString())+'</p><table>';
+  rows.forEach(function(r){html+='<tr><td>'+esc(r[0])+'</td><td>'+esc(r[1])+'</td></tr>'});
+  html+='</table>';
+  var mk=Array.isArray(s.marks)?s.marks:[];
+  if(mk.length){
+    html+='<h2>Named sections</h2><table>';
+    mk.forEach(function(m){html+='<tr><td>'+esc(m.label)+'</td><td>'+esc(fmt(num(m.a,0))+" -> "+fmt(num(m.b,0)))+'</td></tr>'});
+    html+='</table>';
+  }
+  html+='<h2>How to use this sheet</h2><p>Open your own legally held copy of the audio in Songbench and load the saved setup, or set the values above by hand. This sheet contains practice settings only - no audio is included or transferred.</p>';
+  g("printSheet").innerHTML=html;
+  window.print();
+}
+g("libSave").addEventListener("click",function(){
+  var s=captureSetup(g("libTitle").value.trim(),g("libStudent").value.trim());
+  var lib=libRead();
+  lib.items=lib.items.filter(function(x){return !(x.title===s.title&&x.sig===s.sig)});
+  lib.items.push(s);
+  if(lib.items.length>300)lib.items=lib.items.slice(-300);
+  if(libWrite(lib)){renderLib();say(libT("libSaved"),"ok")}
+});
+g("libAddMark").addEventListener("click",function(){
+  if(!(loopA>=0&&loopB>loopA)){say(libT("libNoLoop"),"err");return}
+  var name=g("markName").value.trim()||("Section "+(marksList.length+1));
+  marksList.push({id:"m"+Date.now().toString(36)+Math.random().toString(36).slice(2,5),label:name.slice(0,60),a:loopA,b:loopB});
+  g("markName").value="";renderMarks();say(libT("libMarkAdded"),"ok");
+});
+g("libExport").addEventListener("click",function(){
+  var payload={app:"songbench",version:1,exportedAt:new Date().toISOString(),items:libRead().items};
+  download(new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}),"songbench-library-"+new Date().toISOString().slice(0,10)+".json");
+  say(libT("libExported"),"ok");
+});
+g("libImport").addEventListener("click",function(){g("libFile").click()});
+g("libFile").addEventListener("change",function(e){
+  var f=(e.target.files||[])[0];if(!f)return;
+  var r=new FileReader();
+  r.onload=function(){
+    try{
+      var o=JSON.parse(r.result);
+      if(!o||!Array.isArray(o.items))throw new Error("bad");
+      var lib=libRead(),seen={},added=0;
+      lib.items.forEach(function(x){seen[x.id]=1});
+      o.items.slice(0,500).forEach(function(x){
+        if(!x||typeof x!=="object"||!x.id||seen[x.id])return;
+        seen[x.id]=1;lib.items.push(x);added++;
+      });
+      lib.items=lib.items.slice(-500);
+      libWrite(lib);renderLib();say(added+" "+libT("libImported"),"ok");
+    }catch(err){say(libT("libBadFile"),"err")}
+  };
+  r.readAsText(f);
+  e.target.value="";
+});
+g("libPrint").addEventListener("click",function(){printSheet(null)});
+g("libClear").addEventListener("click",function(){
+  if(!window.confirm(libT("libConfirmClear")))return;
+  libWrite({version:1,items:[]});renderLib();say(libT("libCleared"),"ok");
+});
+
+/* ---------- 3. ZIP packs: speed ladder + multi-file batch --------- */
+var CRC_TABLE=(function(){
+  var t=new Uint32Array(256),i,k,c;
+  for(i=0;i<256;i++){c=i;for(k=0;k<8;k++)c=(c&1)?(0xEDB88320^(c>>>1)):(c>>>1);t[i]=c>>>0}
+  return t;
+})();
+function crc32(u8){var c=0xFFFFFFFF;for(var i=0;i<u8.length;i++)c=CRC_TABLE[(c^u8[i])&255]^(c>>>8);return (c^0xFFFFFFFF)>>>0}
+function zipBlob(files){
+  var parts=[],central=[],offset=0;
+  files.forEach(function(f){
+    var nm=new TextEncoder().encode(f.name),data=f.data,crc=crc32(data),sz=data.length;
+    var lh=new Uint8Array(30+nm.length),dv=new DataView(lh.buffer);
+    dv.setUint32(0,0x04034b50,true);dv.setUint16(4,20,true);dv.setUint16(6,0x0800,true);
+    dv.setUint32(14,crc,true);dv.setUint32(18,sz,true);dv.setUint32(22,sz,true);dv.setUint16(26,nm.length,true);
+    lh.set(nm,30);parts.push(lh,data);
+    var cd=new Uint8Array(46+nm.length),cv=new DataView(cd.buffer);
+    cv.setUint32(0,0x02014b50,true);cv.setUint16(4,20,true);cv.setUint16(6,20,true);cv.setUint16(8,0x0800,true);cv.setUint16(10,0,true);
+    cv.setUint32(16,crc,true);cv.setUint32(20,sz,true);cv.setUint32(24,sz,true);cv.setUint16(28,nm.length,true);
+    cv.setUint32(42,offset,true);cd.set(nm,46);central.push(cd);
+    offset+=lh.length+sz;
+  });
+  var cdSize=0;central.forEach(function(c){cdSize+=c.length});
+  var eo=new Uint8Array(22),ev=new DataView(eo.buffer);
+  ev.setUint32(0,0x06054b50,true);ev.setUint16(8,files.length,true);ev.setUint16(10,files.length,true);
+  ev.setUint32(12,cdSize,true);ev.setUint32(16,offset,true);
+  return new Blob(parts.concat(central,[eo]),{type:"application/zip"});
+}
+function txtFile(name,text){return {name:name,data:new TextEncoder().encode(text)}}
+async function wavBytes(b){return new Uint8Array(await wavBlob(b).arrayBuffer())}
+function safeName(s){return String(s||"audio").replace(/\.[^.]+$/,"").replace(/[^\w\- ]/g,"_").slice(0,70)||"audio"}
+async function buildSpeedLadder(){
+  if(!buf){say(libT("trNeedFile"),"err");return}
+  var start=Math.max(50,Math.min(100,num(g("trStart").value,60))),
+      step=Math.max(5,Math.min(20,num(g("trStep").value,10))),
+      levels=Math.max(2,Math.min(8,num(g("trLevels").value,5))),
+      btn=g("trBuild"),files=[],
+      man=["Songbench speed ladder","Source: "+(fileName||"(local file)"),
+           "Start "+start+"% / step "+step+"% / "+levels+" steps",
+           "Use the files in order: start slow, move up when the passage is clean.",""];
+  btn.disabled=true;
+  try{
+    for(var i=0;i<levels;i++){
+      var v=Math.min(125,start+i*step);
+      g("trMsg").textContent=libT("trBuilding")+" "+(i+1)+"/"+levels+" ("+v+"%)";
+      var p={speed:v/100,semi:P.semi,cancel:P.cancel,rev:P.rev,sec:P.sec,bass:P.bass,pan:P.pan,gain:P.gain,norm:P.norm};
+      var b=await renderFinal(true,p);
+      if(!b)throw new Error("render returned null");
+      var nm=String(i+1).padStart(2,"0")+"_"+v+"pct_"+safeName(fileName)+".wav";
+      files.push({name:nm,data:await wavBytes(b)});
+      man.push(nm+"  -  "+v+"% speed");
+    }
+    man.push("","Tempo: "+(bpm?bpm+" BPM":"-")+"   Key: "+(g("keyName").value||"-"),
+      "Note: "+(g("note").value||"-"),"",
+      "All rendering happened locally in your browser. No audio was uploaded.");
+    files.push(txtFile("manifest.txt",man.join("\n")),txtFile("practice_sheet.txt",sheetText()));
+    download(zipBlob(files),safeName(fileName)+"_speed_ladder.zip");
+    g("trMsg").textContent=libT("trDone")+" "+levels+" "+libT("trVersions");
+    say("Speed ladder ZIP is ready.","ok");
+  }catch(e){
+    g("trMsg").textContent=libT("trFail");say("Could not build the pack: "+(e&&e.message?e.message:e),"err");
+  }finally{btn.disabled=false}
+}
+function decodeFile(f){
+  return new Promise(function(resolve,reject){
+    var r=new FileReader();
+    r.onload=function(){ensureAC().decodeAudioData(r.result,resolve,reject)};
+    r.onerror=function(){reject(new Error("read failed"))};
+    r.readAsArrayBuffer(f);
+  });
+}
+async function buildBatch(){
+  if(!queueFiles.length){say(libT("trNoQueue"),"err");return}
+  syncPFromUI();
+  var btn=g("trBatch"),files=[],
+      man=["Songbench batch practice pack","Same settings applied to every file",
+           "Speed "+Math.round(speed*100)+"% - transpose "+(semi>0?"+":"")+semi+" st - key "+(g("keyName").value||"-"),""];
+  btn.disabled=true;
+  try{
+    for(var i=0;i<queueFiles.length;i++){
+      var f=queueFiles[i];
+      g("trMsg").textContent=libT("trBuilding")+" "+(i+1)+"/"+queueFiles.length+": "+f.name;
+      var b=await decodeFile(f),rendered=await renderFinal(false,P,b);
+      if(!rendered)throw new Error("render returned null");
+      var nm=safeName(f.name)+"_practice.wav";
+      files.push({name:nm,data:await wavBytes(rendered)});
+      man.push(nm+"  <-  "+f.name);
+    }
+    man.push("","All decoding and rendering happened locally. No audio was uploaded.");
+    files.push(txtFile("manifest.txt",man.join("\n")));
+    download(zipBlob(files),"songbench_practice_pack.zip");
+    g("trMsg").textContent=libT("trDone")+" "+queueFiles.length+" "+libT("trVersions");
+    say("Batch ZIP is ready.","ok");
+  }catch(e){
+    g("trMsg").textContent=libT("trFail");say("Could not build the pack: "+(e&&e.message?e.message:e),"err");
+  }finally{btn.disabled=false}
+}
+g("trBuild").addEventListener("click",buildSpeedLadder);
+g("trBatch").addEventListener("click",buildBatch);
+g("trFiles").addEventListener("change",function(e){
+  queueFiles=Array.prototype.slice.call(e.target.files||[]);
+  var box=g("trQueue");box.innerHTML="";
+  if(!queueFiles.length){box.innerHTML='<span class="mut">-</span>';return}
+  queueFiles.forEach(function(f){var c=document.createElement("span");c.className="chip";c.textContent=f.name;box.appendChild(c)});
+});
+
 buildPresetUI();buildBatchUI();applyParams(PRESETS[0],"original");applyPageConfig();restoreHash();syncPFromUI();updateBatchCount();drawWave();
+applyLibI18n();renderLib();renderMarks();
 </script>
 </body>
 </html>

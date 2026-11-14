@@ -12,6 +12,11 @@
 - Eight one-click presets: original, slowed + reverb, nightcore, daycore, sped up, backing track, practice 70%, 8D
 - Batch export several versions of one file as 16-bit WAV, plus a plain-text manifest
 - Share a practice sheet by URL hash: speed, key, loop points, tempo and notes. No audio travels with the link.
+- Automatic tempo (BPM) and key estimates computed locally with an energy-envelope autocorrelation and a chroma FFT; both are estimates the user can override
+- Beat grid overlay and beat-snapped A-B loops; suggested eight-bar sections
+- Practice library: save and reopen named setups with student labels, notes and unlimited named sections
+- Speed ladder ZIP: graded tempo versions from one file, plus a manifest and practice sheet
+- Multi-file batch ZIP: apply the current settings to a queue of audio files in one download
 - Six UI languages: English, Spanish, Portuguese, Indonesian, Japanese, Russian
 
 ## Architecture
@@ -25,7 +30,7 @@ events, and /api/auth/* verifies Google ID tokens. They never receive audio.
 Google sign-in is deliberately lazy: free tools, trials and all single-file exports require no
 account, load no Google script, set no cookie and make no auth request. Buying Pro or a paid Pro
 batch download triggers sign-in, and the server refuses checkout without a verified Google ID token. The Client ID is public; no Client Secret is used or stored.
-No openapi.json is published; the capability list is /capabilities.json.
+Saved practice setups live only in browser localStorage (key songbench.library.v1). No audio is ever stored or uploaded, no cookie is set for the library, and there is no server-side copy. Users can export a JSON backup and import it on another device. Tempo and key detection, ZIP assembly and printing all run locally. No openapi.json is published; the capability list is /capabilities.json.
 
 ## Rights and scope
 

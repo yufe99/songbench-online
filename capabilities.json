@@ -9,6 +9,13 @@
   "sitemap_html": "https://songbench.online/sitemap/",
   "audio_upload": false,
   "server_side_api": "payments-and-google-signin",
+  "browser_local_storage": {
+    "key": "songbench.library.v1",
+    "holds": "practice setups only",
+    "audio_stored": false,
+    "uploaded": false,
+    "backup": "JSON export / import"
+  },
   "server_endpoints": [
     "/api/checkout",
     "/api/webhook",
@@ -32,11 +39,15 @@
       "trial and all free single-file WAV exports",
       "loop-only export",
       "practice sheet download",
-      "share links"
+      "share links",
+      "practice library",
+      "automatic tempo and key estimates",
+      "beat grid",
+      "speed ladder and ZIP practice packs"
     ],
     "session": "HttpOnly cookie holding the Google-signed ID token, re-verified on each use"
   },
-  "note": "All decoding, processing and WAV encoding happen in the browser with Web Audio API and OfflineAudioContext. Server endpoints create Waffo checkout sessions, verify signed payment webhooks and verify Google ID tokens; they never receive audio files. Google sign-in is lazy: the GIS script, the auth cookie and all auth requests are absent until a visitor starts a paid action (checkout or Pro download).",
+  "note": "All decoding, processing and WAV encoding happen in the browser with Web Audio API and OfflineAudioContext. Practice setups are saved in browser localStorage only and never uploaded; ZIP packs are assembled locally. Server endpoints create Waffo checkout sessions, verify signed payment webhooks and verify Google ID tokens; they never receive audio files. Google sign-in is lazy: the GIS script, the auth cookie and all auth requests are absent until a visitor starts a paid action (checkout or Pro download).",
   "capabilities": [
     {
       "id": "speed",
@@ -88,6 +99,29 @@
     {
       "id": "shareable-practice-sheet",
       "contains": "parameters only, never audio"
+    },
+    {
+      "id": "practice-library",
+      "storage": "localStorage",
+      "stores": "named setups, sections, student label, notes"
+    },
+    {
+      "id": "auto-tempo-key",
+      "method": "energy-envelope autocorrelation + chroma FFT",
+      "accuracy": "estimate only"
+    },
+    {
+      "id": "beat-grid",
+      "depends_on": "detected or tapped BPM",
+      "snaps": "A-B loop to beats"
+    },
+    {
+      "id": "speed-ladder",
+      "output": "graded WAV versions + manifest in one ZIP"
+    },
+    {
+      "id": "multi-file-batch",
+      "output": "one ZIP for a queue of audio files"
     }
   ],
   "ui_languages": [
