@@ -334,6 +334,7 @@ footer{border-top:1px solid var(--line);padding:24px 0;font-size:13px;color:var(
     <p class="mut" id="gateDesc">Google sign-in is required before checkout so the order and the Pro licence can be tied to a real email address. Free tools and single-file exports never need an account, and your audio never leaves the device.</p>
     <div class="gbtn" id="googleBtn"></div>
     <div class="gacts"><span class="gmsg" id="gateMsg"></span><button type="button" class="linkbtn" id="gateCancel">Cancel</button></div>
+    <p class="mut" style="margin:10px 0 0">Trouble signing in? <a href="/contact/">Contact us</a> and we will help you complete the purchase.</p>
   </div>
 </div>
 
@@ -785,7 +786,7 @@ async function openCheckout(){
    actually starts a PAID action (buying Pro or a Pro batch download).
 ------------------------------------------------------------------ */
 var GOOGLE_CLIENT_ID="1001028322938-jebcce8lq1u8mu21i12t20ppvqht24jj.apps.googleusercontent.com";
-var AUTH={user:null,pending:null,busy:false,reason:"buy"},gisReady=false;
+var AUTH={user:null,pending:null,busy:false,reason:"buy",watch:null},gisReady=false;
 var GATE_COPY={
   buy:{t:"Sign in before you pay",d:"Google sign-in is required before checkout so the $19 order and your Pro licence can be tied to a real email address. Free tools and single-file exports never need an account, and your audio never leaves the device."},
   download:{t:"Sign in to download Pro versions",d:"Google sign-in is required before the paid Pro batch download so the licence is tied to your email address. Free single WAV exports, loop-only exports, practice sheets and share links never need an account. Your audio still never leaves the device."}
@@ -802,6 +803,7 @@ function showGate(show,reason){
   var el=g("gate");if(!el)return;
   el.hidden=!show;
   document.body.style.overflow=show?"hidden":"";
+  if(!show&&AUTH.watch){clearTimeout(AUTH.watch);AUTH.watch=null}
   if(show){
     gateMsg("");
     var c=GATE_COPY[reason||AUTH.reason]||GATE_COPY.buy;
@@ -827,13 +829,19 @@ function loadGIS(cb){
   if(old){
     if(old.getAttribute("data-loaded")==="1"){cb();return}
     old.addEventListener("load",cb);
-    old.addEventListener("error",function(){gateMsg("Google sign-in could not load. Check your connection and try again.")});
+    old.addEventListener("error",function(){
+      if(old.parentNode)old.parentNode.removeChild(old);
+      gateMsg("Google sign-in could not load. Check your connection and try again.");
+    });
     return;
   }
   var s=document.createElement("script");
   s.id="gisClient";s.src="https://accounts.google.com/gsi/client";s.async=true;
   s.onload=function(){s.setAttribute("data-loaded","1");cb()};
-  s.onerror=function(){gateMsg("Google sign-in could not load. Check your connection and try again.")};
+  s.onerror=function(){
+    if(s.parentNode)s.parentNode.removeChild(s);
+    gateMsg("Google sign-in could not load. Check your connection and try again.");
+  };
   document.head.appendChild(s);
 }
 function onGoogleCredential(resp){
@@ -874,15 +882,6 @@ function initGIS(){
     console.error("Songbench: GIS initialize failed",e);
     return;
   }
-  // Watchdog: Google refuses to render when the origin is not authorised or
-  // the OAuth app is still in Testing. Make that visible instead of silent.
-  setTimeout(function(){
-    var host=g("googleBtn"),wrap=g("gate");
-    if(wrap&&!wrap.hidden&&host&&!host.hasChildNodes()){
-      gateMsg("Google sign-in is blocked here. Allow pop-ups, or check the site's Google sign-in setup.");
-      console.error("Songbench: GIS button did not render. Check Authorized JavaScript origins for "+location.origin);
-    }
-  },6000);
 }
 async function requireGoogle(action,reason){
   AUTH.reason=reason||"buy";
@@ -896,6 +895,20 @@ async function requireGoogle(action,reason){
   if(ok){AUTH.pending=null;action();return}
   showGate(true,AUTH.reason);
   loadGIS(initGIS);
+  // Watchdog covering both failure modes: the GIS script never arriving
+  // (network / accounts.google.com blocked) and Google refusing to render
+  // the button (origin not authorised or OAuth app still in Testing).
+  if(AUTH.watch)clearTimeout(AUTH.watch);
+  AUTH.watch=setTimeout(function(){
+    var host=g("googleBtn"),wrap=g("gate");
+    if(!wrap||wrap.hidden||!host||host.hasChildNodes())return;
+    var ready=window.google&&window.google.accounts&&window.google.accounts.id;
+    var msg=ready
+      ? "Google sign-in is blocked for this site. Check the site's Google sign-in setup."
+      : "Google sign-in could not load. Make sure accounts.google.com is reachable, then try again.";
+    gateMsg(msg);
+    console.error("Songbench: GIS not ready.",msg,"origin:",location.origin);
+  },8000);
 }
 (function bindAccountUI(){
   // Only a returning signed-in visitor triggers a session lookup. Free users
