@@ -119,6 +119,16 @@ footer{border-top:1px solid var(--line);padding:24px 0;font-size:13px;color:var(
 .fx{margin-top:12px}
 .pager{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
 .pager a{font-size:12.5px;background:#eef4fa;border-radius:6px;padding:4px 9px}
+.acct{display:flex;align-items:center;gap:8px;margin-left:auto}
+.acct[hidden],.gate[hidden]{display:none}
+.acct .who{font-size:12.5px;color:#53687e;max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.acct button{font-size:12.5px;padding:5px 10px;border:1px solid #d6e0ea;background:#fff;border-radius:6px;cursor:pointer;color:#1668c1}
+.gate{margin-top:16px;border:1px solid #cfe0f2;background:#f5f9fe}
+.gate h3{margin:0 0 6px;font-size:16px}
+.gate .gbtn{min-height:44px;margin:12px 0 6px}
+.gate .gacts{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.gate .gmsg{font-size:12.5px;color:#8a4a10;min-height:16px}
+.linkbtn{background:none;border:0;color:#1668c1;text-decoration:underline;cursor:pointer;font-size:13px;padding:0}
 @media(max-width:760px){h1{font-size:29px}.g3,.g2{grid-template-columns:1fr}.hd nav{display:none}.hero{padding:30px 0 18px}}
 </style>
 </head>
@@ -137,6 +147,7 @@ footer{border-top:1px solid var(--line);padding:24px 0;font-size:13px;color:var(
     <option value="pt">Portugues</option><option value="id">Bahasa Indonesia</option>
     <option value="ja">日本語</option><option value="ru">Русский</option>
   </select>
+  <div class="acct" id="acct" hidden><span class="who" id="acctWho"></span><button type="button" id="signOut">Sign out</button></div>
 </div></header>
 
 <div class="wrap">
@@ -251,6 +262,13 @@ footer{border-top:1px solid var(--line);padding:24px 0;font-size:13px;color:var(
     <span class="mut" data-i18n2="batchHint">Pick any set of presets and export them together as separate WAV files, plus a plain-text manifest.</span>
   </div>
 
+  <div class="card gate" id="gate" hidden>
+    <h3>Sign in to download Pro versions</h3>
+    <p class="mut">Free exports stay free: single WAV files, loop-only exports, practice sheets and share links never need an account. Google sign-in is asked for only when you download the paid Pro batch versions, so the licence can be tied to your email address. Your audio still never leaves the device.</p>
+    <div class="gbtn" id="googleBtn"></div>
+    <div class="gacts"><span class="gmsg" id="gateMsg"></span><button type="button" class="linkbtn" id="gateCancel">Cancel</button></div>
+  </div>
+
   <div class="out" id="out" data-i18n="outInit">Result will appear here. Nothing is sent to a server.</div>
   <div class="status" id="status"></div>
   <p class="mut" style="margin:14px 0 0" data-i18n="techNote">All processing runs offline in your browser with the Web Audio API. Export is 16-bit WAV.</p>
@@ -263,7 +281,7 @@ footer{border-top:1px solid var(--line);padding:24px 0;font-size:13px;color:var(
   <h3>Where this page starts</h3>
   <p>Speed 1.25x, +4 semitones and a short room reverb. You can change any of those values before exporting; the preset is a starting point, not a limit.</p>
   <h3>The exact steps on this page</h3>
-  <p>In practice, the Nightcore preset sets 1.25x speed, +4 semitones and a short room reverb. The result is rendered with OfflineAudioContext and encoded to WAV inside your browser. Nothing is uploaded and there is no account.</p>
+  <p>In practice, the Nightcore preset sets 1.25x speed, +4 semitones and a short room reverb. The result is rendered with OfflineAudioContext and encoded to WAV inside your browser. Nothing is uploaded and the free tools need no account; Google sign-in is asked only for paid Pro batch downloads.</p>
   <h3>What comes out</h3>
   <p>A 16-bit WAV of the full track or only the A-B region, optionally peak-normalized to -1 dBFS. Batch export writes several versions plus a plain-text manifest, and the share link carries speed, key, loop points and notes - never the audio.</p>
   <div class="card"><h3>Also available from this page</h3><ul><li>Slow down or speed up 50-125% while keeping the pitch</li><li>Transpose -12 to +12 semitones and mark an A-B loop</li><li>Pick any of eight presets, or export several versions at once</li><li>Share a practice sheet by link - parameters only, never audio</li></ul></div>
@@ -299,14 +317,14 @@ footer{border-top:1px solid var(--line);padding:24px 0;font-size:13px;color:var(
   <p class="mut" data-i18n="prS">The free studio stays free forever. Pro is a one-time licence for batch work - never the ability to open the tool.</p>
   <div class="grid g3" style="margin-top:16px">
     <div class="price"><h3>Free</h3><div class="amt">$0</div><p class="mut" data-i18n="pr1">Everything in the studio, no account, no watermark, unlimited single-file exports.</p><ul><li>Local processing</li><li>WAV export</li><li>Share practice sheet</li></ul></div>
-    <div class="price feat"><h3>Songbench Pro</h3><div class="amt">$19<span style="font-size:14px;font-weight:400"> once</span></div><p class="mut" data-i18n="pr2">One payment for lifetime batch export - render every preset of a song in a single pass, with a manifest and a practice sheet.</p><ul><li>Batch export all versions at once</li><li>Plain-text manifest and practice sheet</li><li>No subscription and no renewal</li><li>Secure hosted checkout by Waffo</li></ul><button id="buyPro" class="buybtn" type="button">Get Songbench Pro - $19</button><small class="buymsg mut" id="buyMsg">Test mode: use Waffo test cards, no real charge.</small></div>
+    <div class="price feat"><h3>Songbench Pro</h3><div class="amt">$19<span style="font-size:14px;font-weight:400"> once</span></div><p class="mut" data-i18n="pr2">One payment for lifetime batch export - render every preset of a song in a single pass, with a manifest and a practice sheet.</p><ul><li>Batch export all versions at once</li><li>Plain-text manifest and practice sheet</li><li>No subscription and no renewal</li><li>Google sign-in for Pro downloads</li><li>Secure hosted checkout by Waffo</li></ul><button id="buyPro" class="buybtn" type="button">Get Songbench Pro - $19</button><small class="buymsg mut" id="buyMsg">Test mode: use Waffo test cards, no real charge.</small></div>
     <div class="price"><h3>School / API</h3><div class="amt" style="font-size:22px"><a href="/contact/">Contact us</a></div><p class="mut" data-i18n="pr3">Embed the studio in an LMS, or license it for a department.</p><ul><li>White-label embed</li><li>Privacy and DPA paperwork</li><li>Invoice and PO billing</li></ul></div>
   </div>
 </section>
 
 <section id="faq" class="faq">
   <h2 data-i18n="faqH">Frequently asked questions</h2>
-  <details open><summary data-i18n="q1">Do I need an account, and are my files uploaded?</summary><p data-i18n="a1">No. Audio is decoded and processed inside your browser using the Web Audio API. There is no account, no upload and no watermark.</p></details>
+  <details open><summary data-i18n="q1">Do I need an account, and are my files uploaded?</summary><p data-i18n="a1">No for everything free. Audio is decoded and processed inside your browser using the Web Audio API, with no upload and no watermark. Google sign-in is asked for only when you download paid Pro batch versions, so the licence can be tied to your email.</p></details>
   <details><summary data-i18n="q2">Can I use copyrighted songs?</summary><p data-i18n="a2">Only open audio you have the right to use: your own recordings, licensed material or student work. We do not provide songs, lyrics, or downloads from streaming or video platforms.</p></details>
   <details><summary data-i18n="q3">What exactly do I share with a student?</summary><p data-i18n="a3">A practice sheet - speed, key shift, loop points, tempo and your note - encoded in the link. No audio travels with it, so the student opens their own legally held copy of the song and gets your exact settings.</p></details>
   <details><summary data-i18n="q4">Does slowing a song change the key?</summary><p data-i18n="a4">No. The speed control keeps the original pitch. Transposition is applied when you export, so the practice sheet and the WAV agree.</p></details>
@@ -314,11 +332,11 @@ footer{border-top:1px solid var(--line);padding:24px 0;font-size:13px;color:var(
 </section>
 </div>
 
-<footer><div class="wrap foot"><span data-i18n="foot">Songbench - Free browser-local audio tools. No account, no upload, no cookies. Your files never leave the device.</span><nav class="footlinks"><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a><a href="/about/">About</a><a href="/contact/">Contact</a><a href="/#faq">FAQ</a></nav></div></footer>
+<footer><div class="wrap foot"><span data-i18n="foot">Songbench - Free browser-local audio tools. Free tools need no account; Google sign-in is only for paid Pro downloads. Your files never leave the device.</span><nav class="footlinks"><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a><a href="/about/">About</a><a href="/contact/">Contact</a><a href="/sitemap/">Sitemap</a><a href="/#faq">FAQ</a></nav></div></footer>
 
 <script>
 var I18N={
-en:{h1:"Turn any song into a lesson-ready practice track",sub:"Slow it down, change the key, loop the hard bar, take out the lead vocal - then hand your student a practice sheet. Free, in your browser, nothing uploaded.",b1:"No signup",b2:"No upload - files stay on your device",b3:"No watermark",b4:"Works on Chromebook and phone",navTool:"Tool",navUse:"Use cases",navPrice:"Pricing",navFaq:"FAQ",toolH:"Practice track studio",toolSub:"Open an audio file you have the right to use. Everything below runs locally on your device.",dropT:"Drop a song here or click to choose",dropS:"MP3, WAV, M4A, OGG, FLAC - up to whatever your browser can decode",lgFile:"File",lgTime:"Position",lgLoop:"Loop",lgHint:"Drag on the waveform to set A and B",btnPlay:"Play",btnStop:"Stop",btnLoop:"Loop: off",btnClear:"Clear A-B",btnCancel:"Remove center vocal: off",lbSpeed:"Speed (pitch stays put)",lbKey:"Transpose (applied on export)",lbBpm:"Tap tempo",btnTap:"Tap",lbKeyName:"Key",lbNote:"Note for your student",btnWav:"Export WAV",btnLoopWav:"Export loop only",btnSheet:"Download practice sheet",btnShare:"Copy share link",outInit:"Result will appear here. Nothing is sent to a server.",techNote:"All processing runs offline in your browser with the Web Audio API. Export is 16-bit WAV.",howH:"Three steps to a practice track",s1t:"Open your own audio",s1d:"Drop a recording, a licensed track or a student demo. It never leaves the browser tab.",s2t:"Shape the exercise",s2d:"Slow to 70%, transpose to a singable key, loop bars 12-20, mute the lead vocal with center cancellation.",s3t:"Hand it over",s3d:"Export a WAV for practice, or share a practice sheet link with the exact settings - no audio, no copyright transfer.",ucH:"Built for people who prepare music every week",ucS:"Each scenario opens the same workbench with the settings already set for that task.",uc1t:"Vocal coaches",uc1d:"Transpose a song into the student's range and loop the phrase they keep missing.",uc2t:"Instrument teachers",uc2d:"Slow a solo to half speed without changing pitch, then ramp it back up.",uc3t:"Worship teams",uc3d:"Build a rehearsal backing track and share the key and tempo with the band.",uc4t:"Karaoke hosts",uc4d:"Make a quick instrumental and export a clean WAV for the venue system.",uc5t:"Language teachers",uc5d:"Slow lyrics for listening exercises and hand out a timed practice sheet.",uc6t:"Cover artists",uc6d:"Drop the lead vocal, keep the real arrangement, rehearse over it.",legal:"Rights-safe by design: Songbench does not host a song catalogue, does not supply lyrics, and does not download audio from video platforms. You supply the audio and the rights. The share link contains practice parameters only - speed, key, loop points and notes - never the music itself.",prH:"Pricing that keeps the free tier useful",prS:"The free studio stays free forever. Pro is a one-time licence for batch work - never the ability to open the tool.",pr1:"Everything in the studio, no account, no watermark, unlimited single-file exports.",pr2:"One payment for lifetime batch export - render every preset of a song in a single pass, with a manifest and a practice sheet.",pr3:"Embed the studio in an LMS, or license it for a department.",faqH:"Frequently asked questions",q1:"Do I need an account, and are my files uploaded?",a1:"No. Audio is decoded and processed inside your browser using the Web Audio API. There is no account, no upload and no watermark.",q2:"Can I use copyrighted songs?",a2:"Only open audio you have the right to use: your own recordings, licensed material or student work. We do not provide songs, lyrics, or downloads from streaming or video platforms.",q3:"What exactly do I share with a student?",a3:"A practice sheet - speed, key shift, loop points, tempo and your note - encoded in the link. No audio travels with it, so the student opens their own legally held copy of the song and gets your exact settings.",q4:"Does slowing a song change the key?",a4:"No. The speed control keeps the original pitch. Transposition is applied when you export, so the practice sheet and the WAV agree.",q5:"Which browsers and formats work?",a5:"Current Chrome, Edge, Firefox and Safari. Any format your browser decodes (MP3, WAV, M4A/AAC, OGG, FLAC). Exports are 16-bit WAV.",foot:"Songbench - Free browser-local audio tools. No account, no upload, no cookies. Your files never leave the device."},
+en:{h1:"Turn any song into a lesson-ready practice track",sub:"Slow it down, change the key, loop the hard bar, take out the lead vocal - then hand your student a practice sheet. Free, in your browser, nothing uploaded.",b1:"No signup",b2:"No upload - files stay on your device",b3:"No watermark",b4:"Works on Chromebook and phone",navTool:"Tool",navUse:"Use cases",navPrice:"Pricing",navFaq:"FAQ",toolH:"Practice track studio",toolSub:"Open an audio file you have the right to use. Everything below runs locally on your device.",dropT:"Drop a song here or click to choose",dropS:"MP3, WAV, M4A, OGG, FLAC - up to whatever your browser can decode",lgFile:"File",lgTime:"Position",lgLoop:"Loop",lgHint:"Drag on the waveform to set A and B",btnPlay:"Play",btnStop:"Stop",btnLoop:"Loop: off",btnClear:"Clear A-B",btnCancel:"Remove center vocal: off",lbSpeed:"Speed (pitch stays put)",lbKey:"Transpose (applied on export)",lbBpm:"Tap tempo",btnTap:"Tap",lbKeyName:"Key",lbNote:"Note for your student",btnWav:"Export WAV",btnLoopWav:"Export loop only",btnSheet:"Download practice sheet",btnShare:"Copy share link",outInit:"Result will appear here. Nothing is sent to a server.",techNote:"All processing runs offline in your browser with the Web Audio API. Export is 16-bit WAV.",howH:"Three steps to a practice track",s1t:"Open your own audio",s1d:"Drop a recording, a licensed track or a student demo. It never leaves the browser tab.",s2t:"Shape the exercise",s2d:"Slow to 70%, transpose to a singable key, loop bars 12-20, mute the lead vocal with center cancellation.",s3t:"Hand it over",s3d:"Export a WAV for practice, or share a practice sheet link with the exact settings - no audio, no copyright transfer.",ucH:"Built for people who prepare music every week",ucS:"Each scenario opens the same workbench with the settings already set for that task.",uc1t:"Vocal coaches",uc1d:"Transpose a song into the student's range and loop the phrase they keep missing.",uc2t:"Instrument teachers",uc2d:"Slow a solo to half speed without changing pitch, then ramp it back up.",uc3t:"Worship teams",uc3d:"Build a rehearsal backing track and share the key and tempo with the band.",uc4t:"Karaoke hosts",uc4d:"Make a quick instrumental and export a clean WAV for the venue system.",uc5t:"Language teachers",uc5d:"Slow lyrics for listening exercises and hand out a timed practice sheet.",uc6t:"Cover artists",uc6d:"Drop the lead vocal, keep the real arrangement, rehearse over it.",legal:"Rights-safe by design: Songbench does not host a song catalogue, does not supply lyrics, and does not download audio from video platforms. You supply the audio and the rights. The share link contains practice parameters only - speed, key, loop points and notes - never the music itself.",prH:"Pricing that keeps the free tier useful",prS:"The free studio stays free forever. Pro is a one-time licence for batch work - never the ability to open the tool.",pr1:"Everything in the studio, no account, no watermark, unlimited single-file exports.",pr2:"One payment for lifetime batch export - render every preset of a song in a single pass, with a manifest and a practice sheet.",pr3:"Embed the studio in an LMS, or license it for a department.",faqH:"Frequently asked questions",q1:"Do I need an account, and are my files uploaded?",a1:"No for everything free. Audio is decoded and processed inside your browser using the Web Audio API, with no upload and no watermark. Google sign-in is asked for only when you download paid Pro batch versions.",q2:"Can I use copyrighted songs?",a2:"Only open audio you have the right to use: your own recordings, licensed material or student work. We do not provide songs, lyrics, or downloads from streaming or video platforms.",q3:"What exactly do I share with a student?",a3:"A practice sheet - speed, key shift, loop points, tempo and your note - encoded in the link. No audio travels with it, so the student opens their own legally held copy of the song and gets your exact settings.",q4:"Does slowing a song change the key?",a4:"No. The speed control keeps the original pitch. Transposition is applied when you export, so the practice sheet and the WAV agree.",q5:"Which browsers and formats work?",a5:"Current Chrome, Edge, Firefox and Safari. Any format your browser decodes (MP3, WAV, M4A/AAC, OGG, FLAC). Exports are 16-bit WAV.",foot:"Songbench - Free browser-local audio tools. Free tools need no account; Google sign-in is only for paid Pro downloads. Your files never leave the device."},
 es:{h1:"Convierte cualquier cancion en una pista de practica para tus clases",sub:"Baja la velocidad, cambia el tono, repite el compas dificil, quita la voz principal y entrega una ficha de practica. Gratis, en tu navegador, sin subir archivos.",b1:"Sin registro",b2:"Sin subida - tus archivos quedan en tu equipo",b3:"Sin marca de agua",b4:"Funciona en Chromebook y movil",navTool:"Herramienta",navUse:"Usos",navPrice:"Precios",navFaq:"Preguntas",toolH:"Estudio de pistas de practica",toolSub:"Abre un archivo de audio que tengas derecho a usar. Todo se procesa en tu dispositivo.",dropT:"Suelta una cancion aqui o haz clic para elegir",dropS:"MP3, WAV, M4A, OGG, FLAC",lgFile:"Archivo",lgTime:"Posicion",lgLoop:"Bucle",lgHint:"Arrastra sobre la forma de onda para marcar A y B",btnPlay:"Reproducir",btnStop:"Detener",btnLoop:"Bucle: no",btnClear:"Borrar A-B",btnCancel:"Quitar voz central: no",lbSpeed:"Velocidad (el tono no cambia)",lbKey:"Transponer (al exportar)",lbBpm:"Tempo a golpes",btnTap:"Golpea",lbKeyName:"Tono",lbNote:"Nota para tu alumno",btnWav:"Exportar WAV",btnLoopWav:"Exportar solo el bucle",btnSheet:"Descargar ficha",btnShare:"Copiar enlace",outInit:"El resultado aparecera aqui. Nada se envia a un servidor.",techNote:"Todo el procesamiento se realiza en el navegador con Web Audio API. La exportacion es WAV de 16 bits.",howH:"Tres pasos para crear una pista",s1t:"Abre tu propio audio",s1d:"Usa una grabacion propia, con licencia o de un alumno.",s2t:"Prepara el ejercicio",s2d:"Baja a 70%, transpon, repite los compases 12-20 y atenua la voz.",s3t:"Entregalo",s3d:"Exporta un WAV o comparte una ficha con los ajustes exactos.",ucH:"Para quien prepara musica cada semana",ucS:"Cada situacion abre el mismo estudio con los ajustes ya preparados para esa tarea.",uc1t:"Profesores de canto",uc1d:"Transpon al rango del alumno y repite la frase dificil.",uc2t:"Profesores de instrumento",uc2d:"Baja un solo a media velocidad sin cambiar el tono.",uc3t:"Equipos de alabanza",uc3d:"Crea una base y comparte tono y tempo con la banda.",uc4t:"Animadores de karaoke",uc4d:"Genera un instrumental y exporta un WAV limpio.",uc5t:"Profesores de idiomas",uc5d:"Ralentiza las letras para ejercicios de escucha.",uc6t:"Cantantes de versiones",uc6d:"Quita la voz principal y conserva el arreglo real.",legal:"Diseno seguro en derechos: no alojamos canciones ni letras ni descargamos audio de plataformas de video. El enlace solo contiene parametros de practica, nunca la musica.",prH:"Precios que mantienen util el plan gratuito",prS:"La herramienta basica es gratuita para siempre.",pr1:"Todo el estudio, sin cuenta y sin marca de agua.",pr2:"Para preparar el material de una clase entera.",pr3:"Integra el estudio en un LMS o licencialo por departamento.",faqH:"Preguntas frecuentes",q1:"Necesito cuenta? Se suben mis archivos?",a1:"No. Todo se procesa en tu navegador.",q2:"Puedo usar canciones con derechos?",a2:"Solo audio que tengas derecho a usar.",q3:"Que comparto con el alumno?",a3:"Una ficha con velocidad, tono, bucle y notas; nunca el audio.",q4:"Bajar la velocidad cambia el tono?",a4:"No, el control de velocidad conserva el tono.",q5:"Que navegadores funcionan?",a5:"Chrome, Edge, Firefox y Safari actuales.",foot:"Songbench - Herramientas de audio gratuitas en el navegador. Sin cuenta, sin subida, sin cookies. Tus archivos no salen del dispositivo."},
 pt:{h1:"Transforme qualquer musica em uma faixa de pratica para sua aula",sub:"Diminua a velocidade, mude o tom, repita o trecho dificil, retire a voz principal e entregue uma ficha de pratica. Gratis, no navegador, sem upload.",b1:"Sem cadastro",b2:"Sem upload - arquivos ficam no seu aparelho",b3:"Sem marca d'agua",b4:"Funciona no Chromebook e no celular",navTool:"Ferramenta",navUse:"Usos",navPrice:"Precos",navFaq:"Duvidas",toolH:"Estudio de faixas de pratica",toolSub:"Abra um audio que voce tem direito de usar. Tudo roda no seu dispositivo.",dropT:"Solte uma musica aqui ou clique para escolher",dropS:"MP3, WAV, M4A, OGG, FLAC",lgFile:"Arquivo",lgTime:"Posicao",lgLoop:"Loop",lgHint:"Arraste na forma de onda para marcar A e B",btnPlay:"Tocar",btnStop:"Parar",btnLoop:"Loop: nao",btnClear:"Limpar A-B",btnCancel:"Remover voz central: nao",lbSpeed:"Velocidade (tom mantido)",lbKey:"Transpor (na exportacao)",lbBpm:"Tempo por toques",btnTap:"Toque",lbKeyName:"Tom",lbNote:"Recado para o aluno",btnWav:"Exportar WAV",btnLoopWav:"Exportar so o loop",btnSheet:"Baixar ficha",btnShare:"Copiar link",outInit:"O resultado aparece aqui. Nada e enviado a um servidor.",techNote:"Todo o processamento acontece no navegador com Web Audio API. A exportacao e WAV de 16 bits.",howH:"Tres passos para a faixa de pratica",s1t:"Abra seu proprio audio",s1d:"Use uma gravacao propria, licenciada ou de um aluno.",s2t:"Monte o exercicio",s2d:"Reduza para 70%, transponha, repita os compassos 12-20.",s3t:"Entregue",s3d:"Exporte um WAV ou compartilhe a ficha com os ajustes.",ucH:"Para quem prepara musica toda semana",ucS:"Cada situacao abre o mesmo estudio com os ajustes prontos para aquela tarefa.",uc1t:"Professores de canto",uc1d:"Transponha para a extensao do aluno e repita a frase.",uc2t:"Professores de instrumento",uc2d:"Diminua um solo pela metade sem mudar o tom.",uc3t:"Equipes de louvor",uc3d:"Crie uma base e compartilhe tom e tempo com a banda.",uc4t:"Anfitrioes de karaoke",uc4d:"Gere um instrumental e exporte um WAV limpo.",uc5t:"Professores de idiomas",uc5d:"Desacelere as letras para exercicios de escuta.",uc6t:"Artistas de covers",uc6d:"Retire a voz principal e mantenha o arranjo real.",legal:"Seguro em direitos: nao hospedamos musicas nem letras e nao baixamos audio de plataformas de video. O link contem apenas parametros de pratica, nunca a musica.",prH:"Precos que mantem o gratuito util",prS:"A ferramenta basica e gratuita para sempre.",pr1:"Todo o estudio, sem conta e sem marca d'agua.",pr2:"Para preparar o material de uma turma inteira.",pr3:"Incorpore o estudio em um LMS ou licencie por departamento.",faqH:"Perguntas frequentes",q1:"Preciso de conta? Meus arquivos sao enviados?",a1:"Nao. Tudo e processado no seu navegador.",q2:"Posso usar musicas protegidas?",a2:"Somente audio que voce tem direito de usar.",q3:"O que compartilho com o aluno?",a3:"Uma ficha com velocidade, tom, loop e notas; nunca o audio.",q4:"Diminuir a velocidade muda o tom?",a4:"Nao, o controle de velocidade preserva o tom.",q5:"Quais navegadores funcionam?",a5:"Chrome, Edge, Firefox e Safari atuais.",foot:"Songbench - Ferramentas de audio gratuitas no navegador. Sem conta, sem upload, sem cookies. Seus arquivos nao saem do aparelho."},
 id:{h1:"Ubah lagu apa pun menjadi trek latihan siap pakai untuk les",sub:"Perlambat, ubah nada, ulang bagian yang sulit, hilangkan vokal utama, lalu kirim lembar latihan ke murid. Gratis, di browser, tanpa upload.",b1:"Tanpa daftar",b2:"Tanpa upload - file tetap di perangkat Anda",b3:"Tanpa watermark",b4:"Jalan di Chromebook dan ponsel",navTool:"Alat",navUse:"Kegunaan",navPrice:"Harga",navFaq:"Tanya jawab",toolH:"Studio trek latihan",toolSub:"Buka file audio yang berhak Anda gunakan. Semua diproses di perangkat Anda.",dropT:"Letakkan lagu di sini atau klik untuk memilih",dropS:"MP3, WAV, M4A, OGG, FLAC",lgFile:"File",lgTime:"Posisi",lgLoop:"Ulang",lgHint:"Tarik pada gelombang untuk menentukan A dan B",btnPlay:"Putar",btnStop:"Berhenti",btnLoop:"Ulang: mati",btnClear:"Hapus A-B",btnCancel:"Hilangkan vokal tengah: mati",lbSpeed:"Kecepatan (nada tetap)",lbKey:"Ubah nada (saat ekspor)",lbBpm:"Ketuk tempo",btnTap:"Ketuk",lbKeyName:"Nada dasar",lbNote:"Catatan untuk murid",btnWav:"Ekspor WAV",btnLoopWav:"Ekspor hanya ulangan",btnSheet:"Unduh lembar latihan",btnShare:"Salin tautan",outInit:"Hasil akan muncul di sini. Tidak ada yang dikirim ke server.",techNote:"Semua pemrosesan berjalan di browser dengan Web Audio API. Hasil ekspor berupa WAV 16-bit.",howH:"Tiga langkah membuat trek latihan",s1t:"Buka audio Anda sendiri",s1d:"Gunakan rekaman sendiri, berlisensi, atau karya murid.",s2t:"Atur latihannya",s2d:"Turunkan ke 70%, ubah nada, ulang birama 12-20.",s3t:"Serahkan",s3d:"Ekspor WAV atau bagikan lembar berisi pengaturan.",ucH:"Untuk yang menyiapkan musik setiap minggu",ucS:"Setiap situasi membuka studio yang sama dengan pengaturan yang sudah disiapkan.",uc1t:"Guru vokal",uc1d:"Ubah nada ke jangkauan murid dan ulang frasa sulit.",uc2t:"Guru alat musik",uc2d:"Perlambat solo setengah kecepatan tanpa ubah nada.",uc3t:"Tim ibadah",uc3d:"Buat trek pengiring dan bagikan nada dasar serta tempo.",uc4t:"Penyelenggara karaoke",uc4d:"Buat instrumental dan ekspor WAV bersih.",uc5t:"Guru bahasa",uc5d:"Perlambat lirik untuk latihan menyimak.",uc6t:"Penyanyi cover",uc6d:"Hilangkan vokal utama, pertahankan aransemen asli.",legal:"Aman secara hak cipta: kami tidak menyimpan lagu atau lirik dan tidak mengunduh audio dari platform video. Tautan hanya berisi parameter latihan, bukan musiknya.",prH:"Harga yang tetap membuat versi gratis berguna",prS:"Alat dasar selamanya gratis.",pr1:"Seluruh studio, tanpa akun, tanpa watermark.",pr2:"Untuk menyiapkan materi satu kelas sekaligus.",pr3:"Sematkan studio ke LMS atau lisensikan per departemen.",faqH:"Pertanyaan umum",q1:"Perlu akun? Apakah file diunggah?",a1:"Tidak. Semua diproses di browser Anda.",q2:"Boleh pakai lagu berhak cipta?",a2:"Hanya audio yang berhak Anda gunakan.",q3:"Apa yang dibagikan ke murid?",a3:"Lembar berisi kecepatan, nada, titik ulang, dan catatan; bukan audio.",q4:"Memperlambat mengubah nada?",a4:"Tidak, kontrol kecepatan menjaga nada tetap.",q5:"Browser apa yang didukung?",a5:"Chrome, Edge, Firefox, dan Safari terbaru.",foot:"Songbench - Alat audio gratis di browser. Tanpa akun, tanpa upload, tanpa cookie. File Anda tidak keluar dari perangkat."},
@@ -676,7 +694,7 @@ function applyGain(b,p){
   }
   return out;
 }
-g("expBatch").addEventListener("click",async function(){
+async function runBatchExport(){
   if(!buf){say("Open an audio file first.","err");return}
   var ids=Array.prototype.slice.call(document.querySelectorAll("#batchChips input:checked")).map(function(x){return x.value});
   if(!ids.length){say("Select at least one version below first.","err");return}
@@ -697,7 +715,8 @@ g("expBatch").addEventListener("click",async function(){
   download(new Blob([man.join("\n")],{type:"text/plain;charset=utf-8"}),baseName()+"_batch_manifest.txt");
   outEl.textContent=man.join("\n");
   say("Batch complete: "+ids.length+" versions.","ok");
-});
+}
+g("expBatch").addEventListener("click",function(){requireGoogle(runBatchExport)});
 function applyPageConfig(){
   var c=window.PAGE_CONFIG||{};
   var l=(c.lang||"en").split("-")[0];
@@ -733,6 +752,98 @@ window.addEventListener("resize",drawWave);
     }
   });
 })();
+/* ------------------------------------------------------------------
+   Google sign-in - deliberately lazy.
+   Nothing here runs for free/trial usage: no Google script is loaded,
+   no cookie is written and no auth request is made until a visitor
+   actually clicks a PAID download (batch Pro export).
+------------------------------------------------------------------ */
+var GOOGLE_CLIENT_ID="1001028322938-jebcce8lq1u8mu21i12t20ppvqht24jj.apps.googleusercontent.com";
+var AUTH={user:null,pending:null,busy:false},gisReady=false;
+function hasSignFlag(){return /(?:^|;\s*)sb_signed=1(?:;|$)/.test(document.cookie)}
+function setAccount(u){
+  AUTH.user=u||null;
+  var acct=g("acct"),who=g("acctWho");
+  if(acct)acct.hidden=!AUTH.user;
+  if(who)who.textContent=AUTH.user?(AUTH.user.email||"Signed in"):"";
+}
+function gateMsg(t){var el=g("gateMsg");if(el)el.textContent=t||""}
+function showGate(show){var el=g("gate");if(el)el.hidden=!show;if(show)gateMsg("")}
+async function readSession(){
+  try{
+    var r=await fetch("/api/auth/session",{method:"GET",credentials:"same-origin",cache:"no-store"});
+    var j=await r.json();
+    if(j&&j.signedIn){setAccount({email:j.email,name:j.name,sub:j.sub});return true}
+  }catch(e){}
+  setAccount(null);return false;
+}
+function loadGIS(cb){
+  if(window.google&&window.google.accounts&&window.google.accounts.id){cb();return}
+  var old=document.getElementById("gisClient");
+  if(old){old.addEventListener("load",cb);return}
+  var s=document.createElement("script");
+  s.id="gisClient";s.src="https://accounts.google.com/gsi/client";s.async=true;
+  s.onload=cb;
+  s.onerror=function(){gateMsg("Google sign-in could not load. Check your connection and try again.")};
+  document.head.appendChild(s);
+}
+function onGoogleCredential(resp){
+  if(!resp||!resp.credential){gateMsg("Google returned no credential. Please try again.");return}
+  gateMsg("Verifying your Google account ...");
+  fetch("/api/auth/google",{
+    method:"POST",credentials:"same-origin",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({credential:resp.credential})
+  }).then(function(r){return r.json().then(function(j){return {ok:r.ok,j:j}})})
+    .then(function(x){
+      if(!x.ok||!x.j.ok){gateMsg("Sign-in could not be verified. Please try again.");return}
+      setAccount({email:x.j.email,name:x.j.name,sub:x.j.sub});
+      showGate(false);gateMsg("");
+      var fn=AUTH.pending;AUTH.pending=null;
+      if(fn)fn();
+    })
+    .catch(function(){gateMsg("Network error during sign-in. Please try again.")});
+}
+function initGIS(){
+  if(gisReady)return;
+  if(!(window.google&&window.google.accounts&&window.google.accounts.id))return;
+  gisReady=true;
+  try{
+    google.accounts.id.initialize({
+      client_id:GOOGLE_CLIENT_ID,callback:onGoogleCredential,
+      auto_select:true,ux_mode:"popup",cancel_on_tap_outside:false
+    });
+    var host=g("googleBtn");
+    if(host&&!host.hasChildNodes()){
+      google.accounts.id.renderButton(host,{theme:"outline",size:"large",text:"signin_with",shape:"rectangular",width:240});
+    }
+    // Returning users who already consented get a fresh token without a click.
+    google.accounts.id.prompt();
+  }catch(e){gateMsg("Google sign-in is unavailable in this browser. Please try Chrome or Edge.")}
+}
+async function requireGoogle(action){
+  if(AUTH.user){action();return}
+  if(AUTH.busy)return;
+  AUTH.busy=true;AUTH.pending=action;
+  var ok=await readSession();
+  AUTH.busy=false;
+  if(ok){AUTH.pending=null;action();return}
+  showGate(true);
+  loadGIS(initGIS);
+}
+(function bindAccountUI(){
+  // Only a returning signed-in visitor triggers a session lookup. Free users
+  // have no flag cookie, so they make zero auth requests.
+  if(hasSignFlag())readSession();
+  var out=g("signOut");
+  if(out)out.addEventListener("click",function(){
+    fetch("/api/auth/logout",{method:"POST",credentials:"same-origin"}).catch(function(){});
+    setAccount(null);showGate(false);AUTH.pending=null;
+  });
+  var cancel=g("gateCancel");
+  if(cancel)cancel.addEventListener("click",function(){showGate(false);AUTH.pending=null;gateMsg("")});
+})();
+
 buildPresetUI();buildBatchUI();applyParams(PRESETS[0],"original");applyPageConfig();restoreHash();syncPFromUI();updateBatchCount();drawWave();
 </script>
 </body>

@@ -5,14 +5,37 @@
   "contact_email": "contact@songbench.online",
   "terms_url": "https://songbench.online/terms/",
   "privacy_url": "https://songbench.online/privacy/",
+  "sitemap_xml": "https://songbench.online/sitemap.xml",
+  "sitemap_html": "https://songbench.online/sitemap/",
   "audio_upload": false,
-  "server_side_api": "payments-only",
+  "server_side_api": "payments-and-google-signin",
   "server_endpoints": [
     "/api/checkout",
     "/api/webhook",
-    "/api/status"
+    "/api/status",
+    "/api/auth/google",
+    "/api/auth/session",
+    "/api/auth/logout"
   ],
-  "note": "All decoding, processing and WAV encoding happen in the browser with Web Audio API and OfflineAudioContext. The only server endpoints create Waffo checkout sessions and verify signed payment webhooks; they never receive audio files.",
+  "google_sign_in": {
+    "provider": "Google Identity Services",
+    "flow": "ID token verified server-side with Google tokeninfo",
+    "client_id": "1001028322938-jebcce8lq1u8mu21i12t20ppvqht24jj.apps.googleusercontent.com",
+    "client_secret_required": false,
+    "required_for": [
+      "paid Pro batch downloads"
+    ],
+    "not_required_for": [
+      "opening a file",
+      "playback",
+      "trial and all free single-file WAV exports",
+      "loop-only export",
+      "practice sheet download",
+      "share links"
+    ],
+    "session": "HttpOnly cookie holding the Google-signed ID token, re-verified on each use"
+  },
+  "note": "All decoding, processing and WAV encoding happen in the browser with Web Audio API and OfflineAudioContext. Server endpoints create Waffo checkout sessions, verify signed payment webhooks and verify Google ID tokens; they never receive audio files. Google sign-in is lazy: the GIS script, the auth cookie and all auth requests are absent until a visitor clicks a paid Pro download.",
   "capabilities": [
     {
       "id": "speed",

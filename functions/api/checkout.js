@@ -5,6 +5,30 @@
 
 const API_BASE = "https://api.waffo.ai";
 const SESSION_PATH = "/v1/actions/checkout/create-session";
+const GOOGLE_CLIENT_ID = "1001028322938-jebcce8lq1u8mu21i12t20ppvqht24jj.apps.googleusercontent.com";
+
+// If the visitor signed in with Google for a paid action, prefer the email
+// from the server-verified session over anything the browser claims. This
+// binds the Waffo order to a real, verified identity. Failure is harmless:
+// checkout still works with no prefill.
+async function verifiedSessionEmail(request) {
+  const m = /(?:^|;\s*)sb_session=([^;]+)/.exec(request.headers.get("Cookie") || "");
+  if (!m) return null;
+  try {
+    const res = await fetch(
+      "https://oauth2.googleapis.com/tokeninfo?id_token=" + encodeURIComponent(decodeURIComponent(m[1])),
+      { headers: { Accept: "application/json" } }
+    );
+    if (!res.ok) return null;
+    const t = await res.json();
+    if (t.aud !== GOOGLE_CLIENT_ID) return null;
+    if (t.email_verified !== true && String(t.email_verified) !== "true") return null;
+    if (!Number(t.exp) || Number(t.exp) * 1000 <= Date.now()) return null;
+    return typeof t.email === "string" && t.email.length <= 180 ? t.email : null;
+  } catch (_) {
+    return null;
+  }
+}
 
 function json(data, status) {
   return new Response(JSON.stringify(data), {
@@ -90,12 +114,13 @@ export async function onRequest(context) {
 
   // Only an optional email comes from the browser. Product, price, currency,
   // coupons and successUrl are decided here and signed with the merchant key.
-  let buyerEmail;
+  const sessionEmail = await verifiedSessionEmail(request);
+  let buyerEmail = sessionEmail || undefined;
   try {
     const raw = await request.text();
     if (raw) {
       const input = JSON.parse(raw);
-      if (typeof input.email === "string" && input.email.length <= 180 &&
+      if (!sessionEmail && typeof input.email === "string" && input.email.length <= 180 &&
           /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.email)) {
         buyerEmail = input.email.trim();
       }

@@ -16,11 +16,16 @@
 
 ## Architecture
 
-Every entry page is the same single-page application. There is no audio upload endpoint, no account
-and no analytics. Audio is decoded with decodeAudioData, processed with OfflineAudioContext and
-encoded to WAV inside the browser. The only server functions are payment-related: /api/checkout
-creates a Waffo hosted checkout session and /api/webhook verifies signed payment events. They
-never receive audio. No openapi.json is published; the capability list is /capabilities.json.
+Every entry page is the same single-page application. There is no audio upload endpoint and no
+analytics. Audio is decoded with decodeAudioData, processed with OfflineAudioContext and
+encoded to WAV inside the browser. Server functions are limited to payments and identity:
+/api/checkout creates a Waffo hosted checkout session, /api/webhook verifies signed payment
+events, and /api/auth/* verifies Google ID tokens. They never receive audio.
+
+Google sign-in is deliberately lazy: free tools, trials and all single-file exports require no
+account, load no Google script, set no cookie and make no auth request. Only the paid Pro batch
+download triggers sign-in. The Client ID is public; no Client Secret is used or stored.
+No openapi.json is published; the capability list is /capabilities.json.
 
 ## Rights and scope
 
@@ -101,3 +106,9 @@ Public contact address: contact@songbench.online (a domain mailbox that forwards
 
 Service Terms: https://songbench.online/terms/
 Privacy Policy: https://songbench.online/privacy/
+
+
+## Sitemaps
+
+XML sitemap (search engines): https://songbench.online/sitemap.xml
+HTML sitemap (every published page, grouped): https://songbench.online/sitemap/
