@@ -1,5 +1,7 @@
 // Songbench -> Waffo Pancake hosted checkout.
 // Cloudflare Pages Function (server-side only).
+// A server-verified Google sign-in is REQUIRED. An anonymous request never
+// reaches Waffo, so every order can be attributed to a real email address.
 // The RSA private key is injected as an encrypted environment variable and
 // is NEVER stored in this repository or sent to the browser.
 
@@ -7,24 +9,25 @@ const API_BASE = "https://api.waffo.ai";
 const SESSION_PATH = "/v1/actions/checkout/create-session";
 const GOOGLE_CLIENT_ID = "1001028322938-jebcce8lq1u8mu21i12t20ppvqht24jj.apps.googleusercontent.com";
 
-// If the visitor signed in with Google for a paid action, prefer the email
-// from the server-verified session over anything the browser claims. This
-// binds the Waffo order to a real, verified identity. Failure is harmless:
-// checkout still works with no prefill.
-async function verifiedSessionEmail(request) {
+// Re-verify the Google ID token held in the HttpOnly cookie against Google's
+// own tokeninfo endpoint. Nothing the browser claims is trusted here.
+async function verifiedSession(request) {
   const m = /(?:^|;\s*)sb_session=([^;]+)/.exec(request.headers.get("Cookie") || "");
   if (!m) return null;
   try {
+    const token = decodeURIComponent(m[1]);
     const res = await fetch(
-      "https://oauth2.googleapis.com/tokeninfo?id_token=" + encodeURIComponent(decodeURIComponent(m[1])),
-      { headers: { Accept: "application/json" } }
+      "https://oauth2.googleapis.com/tokeninfo?id_token=" + encodeURIComponent(token),
+      { headers: { Accept: "application/json" }, cf: { cacheTtl: 0 } }
     );
     if (!res.ok) return null;
     const t = await res.json();
     if (t.aud !== GOOGLE_CLIENT_ID) return null;
+    if (t.iss !== "accounts.google.com" && t.iss !== "https://accounts.google.com") return null;
     if (t.email_verified !== true && String(t.email_verified) !== "true") return null;
-    if (!Number(t.exp) || Number(t.exp) * 1000 <= Date.now()) return null;
-    return typeof t.email === "string" && t.email.length <= 180 ? t.email : null;
+    if (!Number(t.exp) || Number(t.exp) * 1000 <= Date.now() + 5000) return null;
+    if (!t.sub || typeof t.email !== "string" || t.email.length > 180) return null;
+    return { email: String(t.email), sub: String(t.sub) };
   } catch (_) {
     return null;
   }
@@ -112,35 +115,27 @@ export async function onRequest(context) {
     if (!env[k]) return json({ error: "payments_not_configured", missing: k }, 503);
   }
 
-  // Only an optional email comes from the browser. Product, price, currency,
-  // coupons and successUrl are decided here and signed with the merchant key.
-  const sessionEmail = await verifiedSessionEmail(request);
-  let buyerEmail = sessionEmail || undefined;
-  try {
-    const raw = await request.text();
-    if (raw) {
-      const input = JSON.parse(raw);
-      if (!sessionEmail && typeof input.email === "string" && input.email.length <= 180 &&
-          /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.email)) {
-        buyerEmail = input.email.trim();
-      }
-    }
-  } catch (_) {
-    // An empty or non-JSON body is fine - email is optional.
-  }
+  // Hard gate: no verified identity, no checkout session. This is enforced on
+  // the server, so bypassing the front end cannot create an anonymous order.
+  const session = await verifiedSession(request);
+  if (!session) return json({ error: "sign_in_required" }, 401);
 
+  // Product, price, currency and successUrl are decided here and signed with
+  // the merchant key. The buyer email comes only from the verified Google
+  // session, never from the request body.
   const payload = {
     productId: env.WAFFO_PRODUCT_ID,
     productType: "onetime",
     currency: env.WAFFO_CURRENCY || "USD",
+    buyerEmail: session.email,
     successUrl: origin + "/pro/thanks/",
     metadata: {
       site: "songbench",
       plan: "pro-lifetime",
       environment: env.WAFFO_ENVIRONMENT || "prod",
+      googleEmail: session.email,
     },
   };
-  if (buyerEmail) payload.buyerEmail = buyerEmail;
 
   try {
     const upstream = await signedPost(env, SESSION_PATH, payload);

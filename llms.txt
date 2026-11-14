@@ -23,8 +23,8 @@ encoded to WAV inside the browser. Server functions are limited to payments and 
 events, and /api/auth/* verifies Google ID tokens. They never receive audio.
 
 Google sign-in is deliberately lazy: free tools, trials and all single-file exports require no
-account, load no Google script, set no cookie and make no auth request. Only the paid Pro batch
-download triggers sign-in. The Client ID is public; no Client Secret is used or stored.
+account, load no Google script, set no cookie and make no auth request. Buying Pro or a paid Pro
+batch download triggers sign-in, and the server refuses checkout without a verified Google ID token. The Client ID is public; no Client Secret is used or stored.
 No openapi.json is published; the capability list is /capabilities.json.
 
 ## Rights and scope

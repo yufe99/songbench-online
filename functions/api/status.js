@@ -29,7 +29,7 @@ export async function onRequest(context) {
       mode: "gis-id-token",
       client_id: "1001028322938-jebcce8lq1u8mu21i12t20ppvqht24jj.apps.googleusercontent.com",
       client_secret_stored: false,
-      gate: "paid-download-only",
+      gate: "required-before-pro-checkout-and-pro-downloads",
       endpoints: ["/api/auth/google", "/api/auth/session", "/api/auth/logout"],
     },
   }), {
