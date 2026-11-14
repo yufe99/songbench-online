@@ -19,7 +19,8 @@ export async function onRequest(context) {
   for (const k of keys) configured[k] = Boolean(env[k]);
   return new Response(JSON.stringify({
     ok: keys.every((k) => Boolean(env[k])),
-    environment: env.WAFFO_ENVIRONMENT || "test",
+    environment: env.WAFFO_ENVIRONMENT || "prod",
+    mode: env.WAFFO_ENVIRONMENT === "test" ? "test" : "live",
     currency: env.WAFFO_CURRENCY || "USD",
     productId: env.WAFFO_PRODUCT_ID || null,
     configured: configured,

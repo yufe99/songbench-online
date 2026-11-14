@@ -137,7 +137,7 @@ export async function onRequest(context) {
     metadata: {
       site: "songbench",
       plan: "pro-lifetime",
-      environment: env.WAFFO_ENVIRONMENT || "test",
+      environment: env.WAFFO_ENVIRONMENT || "prod",
     },
   };
   if (buyerEmail) payload.buyerEmail = buyerEmail;
