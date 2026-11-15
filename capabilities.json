@@ -8,10 +8,10 @@
   "sitemap_xml": "https://songbench.online/sitemap.xml",
   "sitemap_html": "https://songbench.online/sitemap/",
   "audio_upload": false,
-  "server_side_api": "payments-and-google-signin",
+  "server_side_api": "payments-google-signin-and-order-verification",
   "browser_local_storage": {
     "key": "songbench.library.v1",
-    "holds": "practice setups only",
+    "holds": "practice setups and the checkout order reference",
     "audio_stored": false,
     "uploaded": false,
     "backup": "JSON export / import"
@@ -20,10 +20,45 @@
     "/api/checkout",
     "/api/webhook",
     "/api/status",
+    "/api/entitlement",
     "/api/auth/google",
     "/api/auth/session",
     "/api/auth/logout"
   ],
+  "pricing": {
+    "currency": "USD",
+    "free": 0,
+    "pro_one_time": 19.0,
+    "subscription": false,
+    "free_limits": [
+      "60-second WAV preview",
+      "one automatic tempo/key analysis",
+      "one saved practice setup"
+    ],
+    "pro_unlocks": [
+      "full-length unlimited WAV",
+      "unlimited detection and beat grid",
+      "unlimited saved setups and named sections",
+      "printable homework sheets and JSON backup",
+      "speed ladder and multi-file ZIP packs",
+      "restore on any device"
+    ],
+    "drm": false,
+    "note": "Pro is a convenience unlock, not copy protection; all processing is local."
+  },
+  "pro_entitlement": {
+    "endpoint": "/api/entitlement",
+    "method": "GET",
+    "verified_against": [
+      "Google ID token",
+      "Waffo onetimeOrders status=completed, hasRefund=false, productId matches",
+      "buyerEmail or server-set metadata.googleEmail"
+    ],
+    "storage": "stateless signed HttpOnly cookie sb_pro - no KV, no database",
+    "recheck_after_seconds": 86400,
+    "refund_revokes_access": true,
+    "restore": "sign in with the same Google account on any device"
+  },
   "google_sign_in": {
     "provider": "Google Identity Services",
     "flow": "ID token verified server-side with Google tokeninfo",
@@ -31,23 +66,22 @@
     "client_secret_required": false,
     "required_for": [
       "buying Pro (hosted checkout)",
-      "paid Pro batch downloads"
+      "unlocking any Pro feature"
     ],
     "not_required_for": [
       "opening a file",
       "playback",
-      "trial and all free single-file WAV exports",
-      "loop-only export",
+      "speed, key, effects and presets",
+      "60-second free WAV preview",
+      "loop-only preview export",
       "practice sheet download",
       "share links",
-      "practice library",
-      "automatic tempo and key estimates",
-      "beat grid",
-      "speed ladder and ZIP practice packs"
+      "one automatic analysis",
+      "one saved practice setup"
     ],
     "session": "HttpOnly cookie holding the Google-signed ID token, re-verified on each use"
   },
-  "note": "All decoding, processing and WAV encoding happen in the browser with Web Audio API and OfflineAudioContext. Practice setups are saved in browser localStorage only and never uploaded; ZIP packs are assembled locally. Server endpoints create Waffo checkout sessions, verify signed payment webhooks and verify Google ID tokens; they never receive audio files. Google sign-in is lazy: the GIS script, the auth cookie and all auth requests are absent until a visitor starts a paid action (checkout or Pro download).",
+  "note": "All decoding, processing and WAV encoding happen in the browser with Web Audio API and OfflineAudioContext. Practice setups are saved in browser localStorage only and never uploaded; ZIP packs are assembled locally. Server endpoints create Waffo checkout sessions, verify signed payment webhooks, verify Google ID tokens and look up completed orders; they never receive audio files. Google sign-in is lazy: the GIS script, the auth cookie and all auth requests are absent until a visitor buys Pro or requests a Pro feature. Pro is a soft unlock verified against a real Waffo order, not DRM: because all processing is local, a determined user could modify the page script.",
   "capabilities": [
     {
       "id": "speed",
@@ -122,6 +156,12 @@
     {
       "id": "multi-file-batch",
       "output": "one ZIP for a queue of audio files"
+    },
+    {
+      "id": "pro-entitlement",
+      "verified_by": "Waffo completed order + non-refunded + email match",
+      "storage": "signed cookie",
+      "drm": false
     }
   ],
   "ui_languages": [

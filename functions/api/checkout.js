@@ -51,6 +51,17 @@ function b64(bytes) {
   }
   return btoa(out);
 }
+function b64url(bytes) {
+  return b64(bytes).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+// Our own business-side reference. It travels with the order into Waffo and
+// comes back in webhooks, so /api/entitlement can find this exact purchase
+// even if the buyer edits the email address on Waffo's checkout form.
+function makeRef() {
+  const bytes = new Uint8Array(18);
+  crypto.getRandomValues(bytes);
+  return "SB1-" + b64url(bytes);
+}
 
 // Waffo issues PKCS#8 keys. Accept a bare base64 DER, a normal PEM, or a
 // PEM whose line breaks were stored as literal \n in an environment variable.
@@ -123,17 +134,20 @@ export async function onRequest(context) {
   // Product, price, currency and successUrl are decided here and signed with
   // the merchant key. The buyer email comes only from the verified Google
   // session, never from the request body.
+  const ref = makeRef();
   const payload = {
     productId: env.WAFFO_PRODUCT_ID,
     productType: "onetime",
     currency: env.WAFFO_CURRENCY || "USD",
     buyerEmail: session.email,
     successUrl: origin + "/pro/thanks/",
+    orderMerchantExternalId: ref,
     metadata: {
       site: "songbench",
       plan: "pro-lifetime",
       environment: env.WAFFO_ENVIRONMENT || "prod",
       googleEmail: session.email,
+      ref: ref,
     },
   };
 
@@ -149,7 +163,7 @@ export async function onRequest(context) {
       console.error("waffo checkout response has no checkoutUrl", upstream.text.slice(0, 300));
       return json({ error: "checkout_unavailable" }, 502);
     }
-    return json({ url: url });
+    return json({ url: url, ref: ref });
   } catch (err) {
     console.error("waffo checkout error", String(err));
     return json({ error: "checkout_unavailable" }, 502);

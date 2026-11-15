@@ -1,5 +1,7 @@
-// Clears the Google sign-in session. No database is involved - signing out
-// simply removes the two cookies from the browser.
+// Clears the Google sign-in session and the local Pro entitlement ticket.
+// No database is involved - signing out simply removes the browser cookies.
+// A later sign-in with the same Google account restores Pro from the Waffo
+// order via /api/entitlement.
 
 function json(data, status) {
   return new Response(JSON.stringify(data), {
@@ -28,5 +30,6 @@ export async function onRequest(context) {
   });
   h.append("Set-Cookie", "sb_session=; Path=/; Secure; HttpOnly; SameSite=Lax; Max-Age=0");
   h.append("Set-Cookie", "sb_signed=; Path=/; Secure; SameSite=Lax; Max-Age=0");
-  return new Response(JSON.stringify({ ok: true, signedIn: false }), { status: 200, headers: h });
+  h.append("Set-Cookie", "sb_pro=; Path=/; Secure; HttpOnly; SameSite=Lax; Max-Age=0");
+  return new Response(JSON.stringify({ ok: true, signedIn: false, pro: false }), { status: 200, headers: h });
 }

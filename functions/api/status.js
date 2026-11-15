@@ -29,8 +29,16 @@ export async function onRequest(context) {
       mode: "gis-id-token",
       client_id: "1001028322938-jebcce8lq1u8mu21i12t20ppvqht24jj.apps.googleusercontent.com",
       client_secret_stored: false,
-      gate: "required-before-pro-checkout-and-pro-downloads",
+      gate: "required-before-purchase-and-all-pro-features",
       endpoints: ["/api/auth/google", "/api/auth/session", "/api/auth/logout"],
+    },
+    pro_entitlement: {
+      enabled: true,
+      mode: "waffo-graphql-order-lookup-plus-signed-ticket",
+      storage: "stateless - no KV, no database",
+      verified_against: ["completed order", "hasRefund=false", "productId", "buyer email or metadata.googleEmail"],
+      recheck_after_seconds: 86400,
+      endpoints: ["/api/entitlement"],
     },
   }), {
     status: 200,

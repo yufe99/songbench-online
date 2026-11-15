@@ -1,6 +1,12 @@
 // Waffo Pancake webhook receiver for Songbench.
 // Verifies the RSA-SHA256 signature before trusting any event. Public keys
 // are the official ones embedded in @waffo/pancake-ts (test + prod).
+//
+// No KV or database is needed to fulfil an order: /api/entitlement queries
+// Waffo's GraphQL onetimeOrders (status=completed, hasRefund=false,
+// productId matches) whenever a signed-in visitor needs their licence.
+// A refund therefore revokes Pro automatically on the next daily re-check.
+// This receiver validates and logs deliveries for audit and troubleshooting.
 
 const TEST_PUBLIC_KEY = [
   "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxnmRY6yMMA3lVqmAU6ZG",
@@ -114,14 +120,17 @@ export async function onRequest(context) {
     if (seen.size > 500) seen.delete(seen.values().next().value);
   }
 
-  // No user audio or credentials are logged. Order state lives in Waffo;
-  // a KV-backed entitlement store is the next step before gating features.
+  // No audio, no buyer email and no credentials are logged. Order state
+  // lives in Waffo; entitlement is resolved by /api/entitlement on demand.
+  // refund.* events need no local action: hasRefund=false in that query
+  // stops a refunded order from granting Pro on the next re-check.
   console.log(JSON.stringify({
     source: "waffo",
     environment: environment,
     eventType: eventType,
     eventId: eventId,
     orderId: (event.data && event.data.orderId) || null,
+    orderRef: (event.data && event.data.orderMerchantExternalId) || null,
     status: (event.data && event.data.status) || null,
   }));
 
