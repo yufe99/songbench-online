@@ -1,4 +1,7 @@
 User-agent: *
 Allow: /
+User-agent: Googlebot
+Allow: /
 Content-Signal: search=yes, ai-input=yes, ai-train=yes
 Sitemap: https://songbench.online/sitemap.xml
+Sitemap: https://songbench.online/sitemap_index.xml

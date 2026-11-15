@@ -6,6 +6,7 @@
   "terms_url": "https://songbench.online/terms/",
   "privacy_url": "https://songbench.online/privacy/",
   "sitemap_xml": "https://songbench.online/sitemap.xml",
+  "sitemap_index": "https://songbench.online/sitemap_index.xml",
   "sitemap_html": "https://songbench.online/sitemap/",
   "audio_upload": false,
   "server_side_api": "payments-google-signin-and-order-verification",

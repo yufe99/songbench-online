@@ -124,4 +124,5 @@ Privacy Policy: https://songbench.online/privacy/
 ## Sitemaps
 
 XML sitemap (search engines): https://songbench.online/sitemap.xml
+Sitemap index (alternate Search Console entry): https://songbench.online/sitemap_index.xml
 HTML sitemap (every published page, grouped): https://songbench.online/sitemap/
