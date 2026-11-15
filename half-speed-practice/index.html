@@ -630,7 +630,13 @@ async function renderFinal(loopOnly){
   return b;
 }
 function wavBlob(b,maxLen){
-  var ch=b.numberOfChannels,len=Math.min(b.length,maxLen>0?maxLen:b.length),sr=b.sampleRate,bytes=44+len*ch*2;
+  var ch=b.numberOfChannels,sr=b.sampleRate;
+  // Hard backstop: no browser-side export path (single file, batch or ZIP)
+  // can emit more than the free preview unless the server-verified Pro
+  // entitlement is active. This keeps the paywall consistent even if a
+  // second call site is added later.
+  var hardCap=(typeof PRO!=="undefined"&&!PRO.active)?Math.round(sr*FREE_EXPORT_SECONDS):0;
+  var len=Math.min(b.length,maxLen>0?maxLen:b.length,hardCap>0?hardCap:b.length),bytes=44+len*ch*2;
   var ab=new ArrayBuffer(bytes),v=new DataView(ab),p=0;
   function str(s){for(var i=0;i<s.length;i++)v.setUint8(p++,s.charCodeAt(i))}
   function u32(x){v.setUint32(p,x,true);p+=4}
