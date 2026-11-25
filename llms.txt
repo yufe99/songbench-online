@@ -35,7 +35,7 @@ confirms a matching Waffo order. The entitlement is a signed HttpOnly cookie re-
 with no KV and no licence database. The Client ID is public; no Client Secret is used or stored.
 
 Free tier: playback, all effects and presets, one automatic analysis, one saved practice setup
-and a 60-second WAV preview. Pro ($19 once): full-length exports, unlimited detection, unlimited
+and a 60-second WAV preview. Pro ($3.99 once): full-length exports, unlimited detection, unlimited
 saved setups, printable homework sheets, Speed Trainer and ZIP practice packs. Pro is a convenience
 unlock rather than DRM - all processing is local, so the page script could be modified.
 Saved practice setups live only in browser localStorage (key songbench.library.v1). No audio is ever stored or uploaded, no cookie is set for the library, and there is no server-side copy. Users can export a JSON backup and import it on another device. Tempo and key detection, ZIP assembly and printing all run locally. No openapi.json is published; the capability list is /capabilities.json.

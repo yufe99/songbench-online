@@ -48,7 +48,7 @@
   "pricing": {
     "currency": "USD",
     "free": 0,
-    "pro_one_time": 19.0,
+    "pro_one_time": 3.99,
     "subscription": false,
     "free_limits": [
       "60-second WAV preview",
