@@ -126,3 +126,8 @@ Privacy Policy: https://songbench.online/privacy/
 XML sitemap (search engines): https://songbench.online/sitemap.xml
 Sitemap index (alternate Search Console entry): https://songbench.online/sitemap_index.xml
 HTML sitemap (every published page, grouped): https://songbench.online/sitemap/
+
+
+## Remix maker
+
+Slowed + reverb, Nightcore, Daycore and Sped up are one-click presets that let pitch follow the speed (the classic tape-style remix sound). Switch Pitch to locked for practice work in the original key.

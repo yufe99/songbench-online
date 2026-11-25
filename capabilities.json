@@ -10,6 +10,25 @@
   "sitemap_html": "https://songbench.online/sitemap/",
   "audio_upload": false,
   "server_side_api": "payments-google-signin-and-order-verification",
+  "remix_maker": {
+    "one_click_presets": [
+      "slowed + reverb",
+      "nightcore",
+      "daycore",
+      "sped up"
+    ],
+    "pitch_modes": [
+      "locked (practice, pitch preserved)",
+      "follows speed (remix, tape-style pitch)"
+    ],
+    "notes": "Slowed and nightcore edits move pitch with speed by design; practice work keeps the original key. Both modes render locally to WAV.",
+    "pages": [
+      "https://songbench.online/slowed-reverb/",
+      "https://songbench.online/nightcore/",
+      "https://songbench.online/daycore/",
+      "https://songbench.online/speed-up/"
+    ]
+  },
   "browser_local_storage": {
     "key": "songbench.library.v1",
     "holds": "practice setups and the checkout order reference",
