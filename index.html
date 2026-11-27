@@ -135,6 +135,9 @@ footer{border-top:1px solid var(--line);background:#fbfdfb;padding:26px 0;margin
 .buymsg{display:block;margin-top:8px;font-size:12.5px;min-height:16px}
 .fx{margin-top:12px}
 .pager{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.tools-list{list-style:none;padding:0;margin:0}
+.tools-list li{margin:6px 0;font-size:14.5px}
+.tools-list a{font-weight:500}
 .pager a{font-size:12.5px;background:#edf6ee;border-radius:7px;padding:5px 10px}
 .acct{display:flex;align-items:center;gap:8px;margin-left:auto}
 .acct[hidden],.gatewrap[hidden]{display:none}
@@ -181,6 +184,7 @@ footer{border-top:1px solid var(--line);background:#fbfdfb;padding:26px 0;margin
   <div class="logo"><a href="/" aria-label="Songbench home"><svg class="mark" viewBox="0 0 48 48" width="34" height="34" aria-hidden="true" focusable="false"><defs><linearGradient id="sbMark" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#5ab61d"/><stop offset="1" stop-color="#0aa58f"/></linearGradient></defs><rect width="48" height="48" rx="13" fill="url(#sbMark)"/><path d="M11 30h26" stroke="#fff" stroke-width="3.6" stroke-linecap="round"/><path d="M15 30v7M33 30v7" stroke="#fff" stroke-width="3.6" stroke-linecap="round"/><path d="M15 23v-5M21 23v-11M27 23v-8M33 23v-4" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg><span class="word">Song<span>bench</span></span></a></div>
   <nav>
     <a href="#tool" data-i18n="navTool">Tool</a>
+    <a href="/tools/">Tools</a>
     <a href="#usecases" data-i18n="navUse">Use cases</a>
     <a href="#pricing" data-i18n="navPrice">Pricing</a>
     <a href="#faq" data-i18n="navFaq">FAQ</a>
@@ -403,6 +407,79 @@ footer{border-top:1px solid var(--line);background:#fbfdfb;padding:26px 0;margin
   </div>
 </section>
 
+<section id="tools">
+  <h2>All Songbench tools</h2>
+  <p class="mut">53 free browser-local audio tools. Pick one, open your audio, everything runs on your device - no signup, no upload.</p>
+  <div class="grid g3" style="margin-top:16px">
+    <div class="card"><h3>Slow down &amp; practice</h3><ul class="tools-list">
+      <li><a href="/slow-down-for-practice/">Slow down song for practice</a></li>
+      <li><a href="/half-speed-practice/">Slow down music online</a></li>
+      <li><a href="/slow-down-guitar-solo/">Slow down guitar solo to learn</a></li>
+      <li><a href="/slow-down-for-singing/">Slow down a song</a></li>
+      <li><a href="/slow-down-for-dance/">Slow down song for dance practice</a></li>
+      <li><a href="/slow-down-for-transcription/">Slow down music for transcription</a></li>
+      <li><a href="/loop-section-for-practice/">Loop a song section for practice</a></li>
+      <li><a href="/ab-loop/">Ab loop player</a></li>
+    </ul></div>
+    <div class="card"><h3>Speed &amp; key</h3><ul class="tools-list">
+      <li><a href="/speed-changer/">Speed changer</a></li>
+      <li><a href="/change-speed-of-audio/">Change speed of audio</a></li>
+      <li><a href="/music-speed-changer/">Music speed changer</a></li>
+      <li><a href="/speed-up/">Sped up song</a></li>
+      <li><a href="/sped-up-song-maker/">Sped up song maker</a></li>
+      <li><a href="/pitch-changer/">Pitch changer</a></li>
+      <li><a href="/pitch-shifter-online/">Pitch shifter online</a></li>
+      <li><a href="/transpose-song/">Change key of a song</a></li>
+      <li><a href="/change-key-for-my-voice/">Change key of a song for my voice</a></li>
+      <li><a href="/transpose-for-karaoke/">Transpose a song online</a></li>
+      <li><a href="/change-key-for-worship/">Change key for worship songs</a></li>
+      <li><a href="/lower-key/">Lower key of a song</a></li>
+      <li><a href="/raise-key/">Raise key of a song</a></li>
+    </ul></div>
+    <div class="card"><h3>Remix, effects &amp; volume</h3><ul class="tools-list">
+      <li><a href="/slowed-reverb/">Slowed and reverb maker</a></li>
+      <li><a href="/slowed-reverb-online/">Slowed reverb online</a></li>
+      <li><a href="/tiktok-slowed-reverb/">Tiktok slowed reverb</a></li>
+      <li><a href="/nightcore/">Nightcore maker</a></li>
+      <li><a href="/daycore/">Daycore maker</a></li>
+      <li><a href="/8d-audio/">8d audio maker</a></li>
+      <li><a href="/add-reverb/">Add reverb to audio</a></li>
+      <li><a href="/reverb-effect-online/">Reverb effect online</a></li>
+      <li><a href="/bass-booster/">Bass booster</a></li>
+      <li><a href="/volume-booster/">Volume booster</a></li>
+      <li><a href="/audio-normalizer/">Audio normalizer</a></li>
+      <li><a href="/normalize-audio/">Normalize audio online</a></li>
+    </ul></div>
+    <div class="card"><h3>Vocals &amp; backing tracks</h3><ul class="tools-list">
+      <li><a href="/backing-track/">Make backing track from song</a></li>
+      <li><a href="/karaoke-backing-track/">Make a karaoke backing track</a></li>
+      <li><a href="/remove-vocals-for-practice/">Remove vocals from mp3</a></li>
+    </ul></div>
+    <div class="card"><h3>Cut, trim &amp; convert</h3><ul class="tools-list">
+      <li><a href="/audio-cutter/">Audio cutter</a></li>
+      <li><a href="/audio-trimmer/">Audio trimmer</a></li>
+      <li><a href="/cut-mp3/">Cut mp3 online</a></li>
+      <li><a href="/trim-audio-file/">Trim audio file</a></li>
+      <li><a href="/mp3-to-wav/">Mp3 to wav</a></li>
+      <li><a href="/mp3-to-wav-online/">Convert mp3 to wav online</a></li>
+      <li><a href="/audio-to-wav/">Audio to wav converter</a></li>
+      <li><a href="/export-wav-browser/">Audio to wav converter online</a></li>
+      <li><a href="/browser-audio-editor/">Browser audio editor</a></li>
+      <li><a href="/free-audio-editor-no-upload/">Free audio editor no upload</a></li>
+      <li><a href="/no-signup-audio-editor/">No signup audio editor</a></li>
+    </ul></div>
+    <div class="card"><h3>Find tempo &amp; key</h3><ul class="tools-list">
+      <li><a href="/bpm-finder/">Bpm finder</a></li>
+      <li><a href="/find-bpm/">Find bpm of a song</a></li>
+      <li><a href="/tap-tempo/">Tap tempo</a></li>
+      <li><a href="/key-finder/">Key finder</a></li>
+      <li><a href="/find-key/">Find key of a song</a></li>
+      <li><a href="/bpm-key-finder/">Bpm and key finder</a></li>
+    </ul></div>
+  </div>
+  <p style="margin-top:16px"><a href="/tools/">Browse the full tools directory &rarr;</a></p>
+</section>
+
 <section id="privacy">
   <div class="note" data-i18n="legal">Rights-safe by design: Songbench does not host a song catalogue, does not supply lyrics, and does not download audio from video platforms. You supply the audio and the rights. The share link contains practice parameters only - speed, key, loop points and notes - never the music itself.</div>
 </section>
@@ -436,7 +513,7 @@ footer{border-top:1px solid var(--line);background:#fbfdfb;padding:26px 0;margin
 </section>
 </div>
 
-<footer><div class="wrap foot"><span data-i18n="foot">Songbench - browser-local audio tools. The free preview needs no account; Google sign-in is required only to buy Pro or unlock Pro features. Your files never leave the device.</span><nav class="footlinks"><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a><a href="/about/">About</a><a href="/contact/">Contact</a><a href="/sitemap/">Sitemap</a><a href="/#faq">FAQ</a></nav></div></footer>
+<footer><div class="wrap foot"><span data-i18n="foot">Songbench - browser-local audio tools. The free preview needs no account; Google sign-in is required only to buy Pro or unlock Pro features. Your files never leave the device.</span><nav class="footlinks"><a href="/tools/">Tools</a><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a><a href="/about/">About</a><a href="/contact/">Contact</a><a href="/sitemap/">Sitemap</a><a href="/#faq">FAQ</a></nav></div></footer>
 
 <div id="printSheet" aria-hidden="true"></div>
 
