@@ -506,13 +506,13 @@ function setLang(l,keepSeo){
 document.getElementById("lang").addEventListener("change",function(e){setLang(e.target.value,true)});
 setLang("en");
 
-var AC=null, buf=null, playBuf=null, src=null, playing=false, startedAt=0, startOffset=0;
+var AC=null, buf=null, playBuf=null, src=null, playing=false, startedAt=0, startOffset=0, masterGain=null, playPeak=0;
 var speed=1, semi=0, loopA=-1, loopB=-1, loopOn=false, cancelCenter=false, fileName="", bpm=0, taps=[], followPitch=false;
 var cv=document.getElementById("cv"), ctx=cv.getContext("2d"), peaks=null, dragging=false, dragStart=0;
 var statusEl=document.getElementById("status"), outEl=document.getElementById("out");
 function say(msg,cls){statusEl.textContent=msg;statusEl.className="status "+(cls||"")}
 function fmt(t){if(!isFinite(t)||t<0)t=0;var m=Math.floor(t/60),s=t-m*60;return m+":"+(s<10?"0":"")+s.toFixed(1)}
-function ensureAC(){if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();if(AC.state==="suspended")AC.resume();return AC}
+function ensureAC(){if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();if(AC.state==="suspended")AC.resume();if(!masterGain){masterGain=AC.createGain();masterGain.connect(AC.destination);syncPreviewGain()}return AC}
 function g(id){return document.getElementById(id)}
 
 g("drop").addEventListener("click",function(){g("file").click()});
@@ -543,7 +543,14 @@ function centerCancel(b){
   for(var i=0;i<b.length;i++)O[i]=(L[i]-R[i])*0.5;
   return out;
 }
-function rebuild(){playBuf=(cancelCenter&&buf)?centerCancel(buf):buf}
+function rebuild(){playBuf=(cancelCenter&&buf)?centerCancel(buf):buf;playPeak=0;if(playBuf){for(var c=0;c<playBuf.numberOfChannels;c++){var s=playBuf.getChannelData(c);for(var i=0;i<s.length;i++){var v=Math.abs(s[i]);if(v>playPeak)playPeak=v}}}syncPreviewGain()}
+/* Preview gain: the Output gain slider (+ Peak normalize) is applied to live
+   playback through a master GainNode, so what you hear matches the export.
+   Export applies the same math in applyGain(); the preview peak is measured
+   on the playback buffer, so it is an approximation of the export peak when
+   reverb/bass change the level. */
+function previewGainValue(){var g=Math.pow(10,(P.gain||0)/20);if(P.norm&&playPeak>0)g*=0.891/(playPeak*g);return g}
+function syncPreviewGain(){if(masterGain)masterGain.gain.value=previewGainValue()}
 function drawWave(){
   var w=cv.clientWidth||600,h=cv.clientHeight||130,dpr=window.devicePixelRatio||1;
   cv.width=w*dpr;cv.height=h*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);
@@ -595,7 +602,7 @@ function startPlay(){
   try{src.preservesPitch=!followPitch}catch(e){}
   try{src.detune.value=0}catch(e){}
   if(loopOn&&loopB>loopA){src.loop=true;src.loopStart=loopA;src.loopEnd=loopB}
-  src.connect(AC.destination);
+  src.connect(masterGain||AC.destination);
   src.onended=function(){if(playing)stopPlay()};
   startOffset=(loopOn&&loopB>loopA)?Math.max(loopA,0):0;
   src.start(0,startOffset);startedAt=AC.currentTime;playing=true;
@@ -845,8 +852,8 @@ g("semi").addEventListener("input",function(){P.semi=semi;markCustom()});
 g("cancelBtn").addEventListener("click",function(){P.cancel=cancelCenter;markCustom()});
 g("rev").addEventListener("input",function(e){P.rev=parseInt(e.target.value,10)/100;g("revV").textContent=e.target.value+"%";markCustom()});
 g("bass").addEventListener("input",function(e){P.bass=parseInt(e.target.value,10);g("bassV").textContent=e.target.value+" dB";markCustom()});
-g("gain").addEventListener("input",function(e){P.gain=parseInt(e.target.value,10);g("gainV").textContent=e.target.value+" dB";markCustom()});
-g("normBtn").addEventListener("click",function(){P.norm=!P.norm;g("normBtn").textContent=P.norm?t2("normOn"):t2("normOff");g("normV").textContent=P.norm?"on":"off";g("normBtn").classList.toggle("on",P.norm);markCustom()});
+g("gain").addEventListener("input",function(e){P.gain=parseInt(e.target.value,10);g("gainV").textContent=e.target.value+" dB";syncPreviewGain();markCustom()});
+g("normBtn").addEventListener("click",function(){P.norm=!P.norm;g("normBtn").textContent=P.norm?t2("normOn"):t2("normOff");g("normV").textContent=P.norm?"on":"off";g("normBtn").classList.toggle("on",P.norm);syncPreviewGain();markCustom()});
 function applyGain(b,p){
   if(!p.gain&&!p.norm)return b;
   var g=Math.pow(10,(p.gain||0)/20),ch=b.numberOfChannels,len=b.length;
